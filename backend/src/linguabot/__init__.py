@@ -1,0 +1,1 @@
+"""LinguaBot backend package."""
