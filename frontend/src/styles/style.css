@@ -65,6 +65,8 @@ p, h1, h2, h3 { margin: 0; }
 }
 .nav-link { color: var(--muted); font-size: 14px; }
 .nav-link:hover { color: var(--text); }
+.link-button { border: 0; background: none; padding: 0; color: var(--muted); font-size: 14px; }
+.link-button:hover { color: var(--text); }
 .auth-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
 .button-sm { padding: 9px 16px; gap: 8px; font-size: 14px; font-weight: 600; }
 .user-chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); font-size: 14px; font-weight: 600; }
