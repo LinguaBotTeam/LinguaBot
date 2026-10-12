@@ -6,7 +6,7 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -81,12 +81,33 @@ async def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+# Старые отдельные страницы входа и регистрации убраны в пользу модального окна.
+# Ссылки и закладки на них ведут на главную и открывают нужную форму.
+@app.get("/login.html", include_in_schema=False)
+async def legacy_login() -> RedirectResponse:
+    return RedirectResponse(url="/?auth=login", status_code=307)
+
+
+@app.get("/register.html", include_in_schema=False)
+async def legacy_register() -> RedirectResponse:
+    return RedirectResponse(url="/?auth=register", status_code=307)
+
+
 # Раздача frontend тем же сервером: http://127.0.0.1:8000 откроет index.html.
 # Монтируется последним, чтобы не перекрывать /api, /docs и /health.
+class NoCacheStaticFiles(StaticFiles):
+    """Статика без агрессивного кеша, чтобы браузер не показывал старые файлы."""
+
+    async def get_response(self, path: str, scope) -> object:
+        response = await super().get_response(path, scope)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
 _frontend_path = Path(settings.frontend_dir)
 if _frontend_path.is_dir():
     app.mount(
         "/",
-        StaticFiles(directory=str(_frontend_path), html=True),
+        NoCacheStaticFiles(directory=str(_frontend_path), html=True),
         name="frontend",
     )
