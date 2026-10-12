@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация — LinguaBot</title>
+  <script>
+    try {
+      if (localStorage.getItem('linguabot-theme') === 'light') {
+        document.documentElement.dataset.theme = 'light';
+      }
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="./src/styles/style.css">
+  <link rel="stylesheet" href="./src/styles/auth.css">
+</head>
+<body>
+  <header class="header container">
+    <a class="logo" href="./index.html"><span aria-hidden="true">L</span> LinguaBot</a>
+    <div class="header-actions">
+      <a class="nav-link" href="./index.html">На главную</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить светлую тему">
+        <span id="theme-icon" aria-hidden="true">☀</span>
+        <span id="theme-label">Светлая тема</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="auth container">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <h1 id="auth-title">Создать аккаунт</h1>
+      <p class="auth-subtitle">Присоединяйся и начни практиковать язык уже сегодня.</p>
+
+      <form class="form" data-auth-form="register" novalidate>
+        <p class="form-error" data-auth-error role="alert" hidden></p>
+
+        <div class="field">
+          <label for="register-name">Имя</label>
+          <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Как к тебе обращаться" minlength="2" required>
+        </div>
+
+        <div class="field">
+          <label for="register-email">Email</label>
+          <input id="register-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="register-password">Пароль</label>
+          <input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Минимум 8 символов" minlength="8" required>
+        </div>
+
+        <button class="button" type="submit">Зарегистрироваться</button>
+      </form>
+
+      <p class="auth-alt">Уже есть аккаунт? <a href="./login.html">Войти</a></p>
+      <p class="auth-hint">Регистрируясь, ты соглашаешься использовать LinguaBot в учебных целях.</p>
+    </section>
+  </main>
+
+  <footer class="footer container">LinguaBot · Языки становятся ближе</footer>
+
+  <script src="./src/api/client.js"></script>
+  <script src="./src/app/script.js"></script>
+  <script src="./src/app/auth-page.js"></script>
+</body>
+</html>
