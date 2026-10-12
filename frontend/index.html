@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaBot — изучай языки в своём темпе</title>
+  <script>
+    try {
+      if (localStorage.getItem('linguabot-theme') === 'light') {
+        document.documentElement.dataset.theme = 'light';
+      }
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="./src/styles/style.css">
+</head>
+<body>
+  <header class="header container">
+    <a class="logo" href="#"><span aria-hidden="true">L</span> LinguaBot</a>
+    <div class="header-actions">
+      <a class="nav-link" href="#features">Возможности</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить светлую тему">
+        <span id="theme-icon" aria-hidden="true">☀</span>
+        <span id="theme-label">Светлая тема</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container" aria-labelledby="hero-title">
+      <div>
+        <p class="badge">Твой ИИ-помощник в изучении языков</p>
+        <h1 id="hero-title">Твой язык.<br><span>Твой темп.</span></h1>
+        <p class="description">Практикуй разговорную речь, разбирай ошибки и открывай новое. Шаг за шагом — к уверенности в общении.</p>
+        <button class="button" type="button" data-start>Начать обучение <span aria-hidden="true">→</span></button>
+      </div>
+
+      <aside class="preview" aria-label="Пример диалога с LinguaBot">
+        <div class="preview-header"><span class="avatar" aria-hidden="true">L</span><div><strong>LinguaBot</strong><p>Пример диалога</p></div></div>
+        <p class="bubble bot" lang="en">Hi! What do you like to do in your free time?</p>
+        <p class="bubble user" lang="en">I like play video games.</p>
+        <div class="bubble bot"><p>Хороший ответ! После <span lang="en">like</span> здесь можно использовать форму с <span lang="en">-ing</span>:</p><p class="correction" lang="en">I like <strong>playing</strong> video games.</p></div>
+        <p class="preview-note">Практика на понятных тебе примерах</p>
+      </aside>
+    </section>
+
+    <section class="features container" id="features" aria-labelledby="features-title">
+      <h2 id="features-title">Учиться проще, когда есть поддержка</h2>
+      <div class="cards">
+        <article class="card"><span class="number">01</span><h3>Практика диалогов</h3><p>Общайся на знакомые темы и пробуй новые слова в разговоре.</p></article>
+        <article class="card"><span class="number">02</span><h3>Понятные объяснения</h3><p>Разбирай ошибки на примерах и узнавай, как выразить мысль точнее.</p></article>
+        <article class="card"><span class="number">03</span><h3>Обучение в своём темпе</h3><p>Двигайся постепенно: от простых фраз к более сложным разговорам.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">LinguaBot · Языки становятся ближе</footer>
+
+  <dialog class="notice" id="start-notice" aria-labelledby="notice-title" aria-describedby="notice-description">
+    <h2 id="notice-title">Скоро начнём!</h2>
+    <p id="notice-description">Мы готовим LinguaBot к первым занятиям. Возможность начать обучение появится позже.</p>
+    <form method="dialog"><button class="button" autofocus>Понятно</button></form>
+  </dialog>
+
+  <script src="./src/app/script.js"></script>
+</body>
+</html>
