@@ -224,6 +224,11 @@ __marimo__/
 !.env.example
 !.env.*.example
 
+# LinguaBot: локальная база данных SQLite
+*.sqlite3
+*.db
+*.db-journal
+
 # LinguaBot: local SSH credentials and default private key filenames
 .ssh/
 id_rsa
