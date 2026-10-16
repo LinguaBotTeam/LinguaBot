@@ -174,7 +174,32 @@ cd LinguaBot
 
 SSH-ключ должен быть настроен на вашем компьютере, а его публичная часть добавлена в ваш аккаунт GitHub. Каждый участник использует свой ключ. Инструкция: [подключение к GitHub по SSH](https://docs.github.com/en/authentication/connecting-to-github-with-ssh).
 
-Клонирование получает структуру и историю проекта. Установка зависимостей, запуск сервера и запуск тестов на текущем этапе не предусмотрены.
+Клонирование получает структуру и историю проекта.
+
+## Запуск
+
+Реализованы регистрация и вход: backend на FastAPI с SQLAlchemy и JWT-токенами, база данных по умолчанию — SQLite (`backend/linguabot.db`). Формы входа и регистрации открываются в модальном окне поверх главной страницы (`frontend/index.html`, логика — в `frontend/src/app/auth-modal.js`).
+
+Backend:
+
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m uvicorn linguabot.main:app --reload
+```
+
+Сервер отвечает на `http://127.0.0.1:8000`, интерактивная документация API — на `http://127.0.0.1:8000/docs`. Настройки читаются из файла `backend/.env`; образец значений — `backend/.env.example`. Для перехода на PostgreSQL укажите `DATABASE_URL` вида `postgresql+asyncpg://...`.
+
+Проверки backend:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pytest
+```
+
+Frontend: запустите backend и откройте `http://127.0.0.1:8000/` — сервер сам раздаёт сайт (главная, модальные окна входа и регистрации, стили и скрипты). Кнопки «Войти» и «Регистрация» в шапке открывают модальное окно поверх страницы, не уводя с текущего места; формы обращаются к тому же API.
 
 ## Работа в команде
 
