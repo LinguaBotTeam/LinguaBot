@@ -16,7 +16,8 @@ from linguabot.modules.dialogues.schemas import (
 
 router = APIRouter()
 
-DialogueId = Annotated[int, Path(ge=1, le=2**63 - 1)]
+# SQLAlchemy Integer соответствует int4 в PostgreSQL и поддерживается SQLite.
+DialogueId = Annotated[int, Path(ge=1, le=2**31 - 1)]
 PageLimit = Annotated[int, Query(ge=1, le=100)]
 PageOffset = Annotated[int, Query(ge=0, le=2**63 - 1)]
 

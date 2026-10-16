@@ -162,7 +162,7 @@ def test_foreign_and_missing_dialogues_are_indistinguishable_and_never_written(c
     other, _ = sign_in(client)
     dialogue = create_dialogue(client, owner)
     url = messages_url(dialogue)
-    missing_url = f"{DIALOGUES}/9223372036854775807/messages"
+    missing_url = f"{DIALOGUES}/2147483647/messages"
     sent = client.post(url, headers=owner, json={"content": "Owner's message"})
     assert sent.status_code == 201
     original_history = client.get(url, headers=owner).json()
@@ -237,6 +237,17 @@ def test_message_history_is_scoped_to_the_selected_dialogue(client):
 
     assert client.get(second_url, headers=headers).json() == []
     assert len(client.get(first_url, headers=headers).json()) == 2
+
+
+@pytest.mark.parametrize("method", ["get", "post"])
+def test_oversized_dialogue_id_is_rejected_before_database_access(client, method):
+    headers, _ = sign_in(client)
+    url = f"{DIALOGUES}/2147483648/messages"
+    kwargs = {"json": {"content": "Hello"}} if method == "post" else {}
+
+    response = client.request(method, url, headers=headers, **kwargs)
+
+    assert_error(response, 422, "validation_error", "dialogue_id")
 
 
 @pytest.mark.parametrize("resource", ["dialogues", "messages"])
