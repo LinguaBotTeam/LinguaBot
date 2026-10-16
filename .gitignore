@@ -253,3 +253,8 @@ coverage/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# LinguaBot: personal agent instructions and project memory (local only)
+/AGENTS.md
+/PROJECT_MEMORY.md
+/.agent-local/
