@@ -19,6 +19,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 async def init_models() -> None:
     """Создаёт таблицы, если их ещё нет."""
     from linguabot.modules.users import models  # noqa: F401  (регистрация моделей)
+    from linguabot.modules.dialogues import models as dialogue_models  # noqa: F401
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
