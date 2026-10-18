@@ -239,6 +239,7 @@ id_ed25519
 # LinguaBot: local editor settings
 .idea/
 .vscode/
+.vs/
 *.iml
 *.swp
 *.swo
