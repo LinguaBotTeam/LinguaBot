@@ -115,6 +115,13 @@
     getQuestions: function () {
       return request('/assessment/questions', { method: 'GET' });
     },
+    // Отправка ответов [{ question_id, option_id }]: нужны все вопросы теста.
+    submitTest: function (answers) {
+      return request('/assessment/submit', {
+        method: 'POST',
+        body: JSON.stringify({ answers: answers }),
+      });
+    },
     getToken: getToken,
     getStoredUser: getStoredUser,
     saveSession: saveSession,
