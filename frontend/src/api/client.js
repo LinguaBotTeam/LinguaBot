@@ -111,6 +111,10 @@
     me: function () {
       return request('/auth/me', { method: 'GET' });
     },
+    // Тест уровня: вопросы без правильных ответов. Требует авторизации.
+    getQuestions: function () {
+      return request('/assessment/questions', { method: 'GET' });
+    },
     getToken: getToken,
     getStoredUser: getStoredUser,
     saveSession: saveSession,
