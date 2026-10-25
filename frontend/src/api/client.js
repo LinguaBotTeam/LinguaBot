@@ -122,6 +122,10 @@
         body: JSON.stringify({ answers: answers }),
       });
     },
+    // Последний результат. Если тест не пройден — code === 'result_not_found'.
+    getResult: function () {
+      return request('/assessment/result', { method: 'GET' });
+    },
     getToken: getToken,
     getStoredUser: getStoredUser,
     saveSession: saveSession,
