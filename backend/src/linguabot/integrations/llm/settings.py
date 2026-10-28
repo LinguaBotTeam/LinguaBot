@@ -18,9 +18,9 @@ class LLMSettings(BaseSettings):
     )
 
     base_url: str = "http://127.0.0.1:11434"
-    model: str = "qwen3.5:4b-q4_K_M"
+    model: str = "qwen3:4b-instruct-2507-q4_K_M"
     timeout_seconds: float = Field(default=120, gt=0, le=300, allow_inf_nan=False)
-    context_tokens: int = Field(default=4096, ge=512, le=8192)
+    context_tokens: int = Field(default=4096, ge=1024, le=8192)
     max_output_tokens: int = Field(default=384, ge=1, le=1024)
 
     @field_validator("base_url")

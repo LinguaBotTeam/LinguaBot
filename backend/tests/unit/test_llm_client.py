@@ -23,7 +23,7 @@ def generate(handler, **overrides):
 
 def envelope(content='{"reply":"Hello!","correction":null}', **overrides):
     return {
-        "model": "qwen3.5:4b-q4_K_M",
+        "model": "qwen3:4b-instruct-2507-q4_K_M",
         "created_at": "2026-01-01T00:00:00Z",
         "message": {"role": "assistant", "content": content},
         "done": True,
@@ -62,7 +62,7 @@ def test_request_keeps_message_order_and_uses_local_structured_nonstreaming_opti
         {"role": "user", "content": "I am fine."},
     ]
     assert set(body) == {"model", "messages", "stream", "think", "format", "keep_alive", "options"}
-    assert body["model"] == "qwen3.5:4b-q4_K_M"
+    assert body["model"] == "qwen3:4b-instruct-2507-q4_K_M"
     assert body["stream"] is False
     assert body["think"] is False
     assert body["keep_alive"] == "2m"
@@ -187,7 +187,7 @@ def test_cloud_or_malformed_model_tags_are_refused(model):
 
 @pytest.mark.parametrize("field,value", [
     ("timeout_seconds", 0), ("timeout_seconds", 301), ("timeout_seconds", float("inf")),
-    ("context_tokens", 511), ("context_tokens", 8193),
+    ("context_tokens", 1023), ("context_tokens", 8193),
     ("max_output_tokens", 0), ("max_output_tokens", 1025),
 ])
 def test_resource_limits_are_bounded(field, value):

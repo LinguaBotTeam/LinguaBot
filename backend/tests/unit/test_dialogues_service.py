@@ -274,7 +274,7 @@ def test_assessment_fallback_reaches_model(tmp_path, level, cefr, want):
 
         class LevelModel:
             async def generate(self, messages):
-                assert f"CEFR level {want}." in messages[0].content
+                assert f"CEFR: {want}." in messages[0].content
                 return ModelReply(reply="Hello!", correction=None)
 
         async with database(tmp_path) as (_, sessions, owner_id, _):
