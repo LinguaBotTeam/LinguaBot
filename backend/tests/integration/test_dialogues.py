@@ -12,6 +12,19 @@ from linguabot.core.config import settings
 DIALOGUES = "/api/v1/dialogues"
 
 
+@pytest.fixture(autouse=True)
+def offline_model(monkeypatch):
+    """Only the external inference boundary is replaced; all API/storage stays real."""
+    from linguabot.integrations.llm import ModelReply
+    from linguabot.modules.dialogues import service
+
+    class DeterministicModel:
+        async def generate(self, messages):
+            return ModelReply(reply="Hello! Let us practice.", correction=None)
+
+    monkeypatch.setattr(service, "get_language_model", lambda: DeterministicModel())
+
+
 def sign_in(client):
     email = f"chat-{uuid.uuid4().hex}@example.com"
     registration = client.post(
@@ -105,7 +118,7 @@ def test_dialogue_owner_cannot_be_supplied_by_client(client):
     assert client.get(DIALOGUES, headers=headers).json() == []
 
 
-def test_message_pair_is_trimmed_persisted_and_ordered_with_fixed_reply(client):
+def test_message_pair_is_trimmed_persisted_and_ordered_with_deterministic_model(client):
     headers, _ = sign_in(client)
     dialogue = create_dialogue(client, headers)
     url = messages_url(dialogue)
@@ -281,3 +294,51 @@ def test_pagination_bounds_are_validated(client, resource, params, field):
     response = client.get(url, headers=headers, params=params)
 
     assert_error(response, 422, "validation_error", field)
+
+
+@pytest.mark.parametrize("kind,status,code", [
+    ("unavailable", 503, "service_unavailable"), ("invalid", 502, "bad_gateway"),
+    ("settings", 503, "service_unavailable"),
+])
+def test_model_failure_returns_sanitized_api_error_without_changing_dialogue(client, monkeypatch, kind, status, code):
+    from linguabot.integrations.llm import LLMInvalidResponseError, LLMUnavailableError, LLMSettings
+    from linguabot.modules.dialogues import service
+
+    class FailingModel:
+        async def generate(self, messages):
+            raise LLMUnavailableError() if kind == "unavailable" else LLMInvalidResponseError()
+
+    if kind == "settings":
+        monkeypatch.setattr(service, "get_language_model", lambda: LLMSettings(_env_file=None, base_url="https://example.com/private-detail"))
+    else:
+        monkeypatch.setattr(service, "get_language_model", lambda: FailingModel())
+    headers, _ = sign_in(client)
+    dialogue = create_dialogue(client, headers)
+    url = messages_url(dialogue)
+
+    response = client.post(url, headers=headers, json={"content": "Hello!"})
+
+    assert_error(response, status, code)
+    assert "private-detail" not in response.text
+    assert client.get(url, headers=headers).json() == []
+    assert client.get(DIALOGUES, headers=headers).json() == [dialogue]
+
+
+def test_correction_is_returned_and_persisted_on_user_message_only(client, monkeypatch):
+    from linguabot.integrations.llm import ModelReply
+    from linguabot.modules.dialogues import service
+
+    class CorrectingModel:
+        async def generate(self, messages):
+            return ModelReply(reply="How are you?", correction="Нужно: I am happy.")
+
+    monkeypatch.setattr(service, "get_language_model", lambda: CorrectingModel())
+    headers, _ = sign_in(client)
+    url = messages_url(create_dialogue(client, headers, scenario="introductions"))
+    response = client.post(url, headers=headers, json={"content": "I is happy."})
+
+    assert response.status_code == 201
+    pair = response.json()
+    assert pair["user_message"]["correction"] == "Нужно: I am happy."
+    assert pair["assistant_message"]["correction"] is None
+    assert client.get(url, headers=headers).json() == [pair["user_message"], pair["assistant_message"]]

@@ -48,7 +48,12 @@ async def list_dialogues(
     "/{dialogue_id}/messages",
     response_model=MessagePair,
     status_code=status.HTTP_201_CREATED,
-    summary="Сохранить сообщение и получить ответ заглушки",
+    summary="Отправить сообщение и получить ответ локального ИИ",
+    description=(
+        "Практика английского по сценарию диалога; пояснение ошибки на русском "
+        "сохраняется в correction сообщения пользователя. При сбое модели пара "
+        "не записывается. Одновременная отправка в тот же диалог возвращает 409."
+    ),
 )
 async def send_message(
     dialogue_id: DialogueId,
