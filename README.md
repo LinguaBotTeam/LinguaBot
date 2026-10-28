@@ -186,7 +186,7 @@ Backend:
 cd backend
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn linguabot.main:app --reload
+.\.venv\Scripts\python.exe -m uvicorn linguabot.main:app --app-dir src --reload
 ```
 
 Сервер отвечает на `http://127.0.0.1:8000`, интерактивная документация API — на `http://127.0.0.1:8000/docs`. Настройки читаются из файла `backend/.env`; образец значений — `backend/.env.example`. Для перехода на PostgreSQL укажите `DATABASE_URL` вида `postgresql+asyncpg://...`.
@@ -196,7 +196,7 @@ python -m venv .venv
 ```powershell
 cd backend
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-.\.venv\Scripts\python.exe -m pytest
+.\.venv\Scripts\python.exe -m pytest -o pythonpath=src
 ```
 
 Frontend: запустите backend и откройте `http://127.0.0.1:8000/` — сервер сам раздаёт сайт (главная, модальные окна входа и регистрации, стили и скрипты). Кнопки «Войти» и «Регистрация» в шапке открывают модальное окно поверх страницы, не уводя с текущего места; формы обращаются к тому же API.
