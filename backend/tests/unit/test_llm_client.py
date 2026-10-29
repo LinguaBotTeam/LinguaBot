@@ -235,7 +235,7 @@ def test_chat_messages_reject_unrecognized_roles():
     from linguabot.integrations.llm.client import ChatMessage
 
     with pytest.raises(ValidationError):
-        ChatMessage(role="tool", content="Synthetic")
+        ChatMessage.model_validate({"role": "tool", "content": "Synthetic"})
 
 
 def test_corrected_english_is_explained_using_only_current_user_text():
