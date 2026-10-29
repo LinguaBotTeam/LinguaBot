@@ -21,7 +21,7 @@ def generate(handler, **overrides):
     return asyncio.run(client.generate([ChatMessage(role="user", content="Hello!")]))
 
 
-def envelope(content='{"reply":"Hello!","correction":null}', **overrides):
+def envelope(content='{"reply":"Hello!","corrected_text":null}', **overrides):
     return {
         "model": "qwen3:4b-instruct-2507-q4_K_M",
         "created_at": "2026-01-01T00:00:00Z",
@@ -71,29 +71,30 @@ def test_request_keeps_message_order_and_uses_local_structured_nonstreaming_opti
     schema = body["format"]
     assert schema["type"] == "object"
     assert schema["additionalProperties"] is False
-    assert set(schema["required"]) == {"reply", "correction"}
+    assert set(schema["required"]) == {"reply", "corrected_text"}
     assert schema["properties"]["reply"]["maxLength"] == 4000
-    assert schema["properties"]["correction"]["anyOf"] == [
-        {"maxLength": 3000, "type": "string"}, {"type": "null"},
+    assert schema["properties"]["corrected_text"]["anyOf"] == [
+        {"maxLength": 4000, "minLength": 1, "type": "string"}, {"type": "null"},
     ]
 
 
 @pytest.mark.parametrize("correction,want", [(None, None), (" \n ", None), ("  Use 'am'.  ", "Use 'am'.")])
 def test_model_reply_strips_text_and_normalizes_blank_correction(correction, want):
-    result = generate(lambda request: httpx.Response(200, json=envelope(json.dumps({
-        "reply": "  Hello!\n  ", "correction": correction,
-    }))))
+    from linguabot.integrations.llm import ModelReply
+
+    result = ModelReply(reply="  Hello!\n  ", correction=correction)
     assert result.reply == "Hello!"
     assert result.correction == want
 
 
 @pytest.mark.parametrize("content", [
     "", "not JSON", "{", "[]", "null", "{}", '{"reply":"Hello!"}',
-    '{"reply":"","correction":null}', '{"reply":" ","correction":null}',
-    '{"reply":3,"correction":null}', '{"reply":"Hello!","correction":false}',
-    '{"reply":"Hello!","correction":null,"extra":"unexpected"}',
-    json.dumps({"reply": "x" * 4001, "correction": None}),
-    json.dumps({"reply": "Hello!", "correction": "x" * 3001}),
+    '{"reply":"","corrected_text":null}', '{"reply":" ","corrected_text":null}',
+    '{"reply":3,"corrected_text":null}', '{"reply":"Hello!","corrected_text":false}',
+    '{"reply":"Hello!","corrected_text":null,"extra":"unexpected"}',
+    '{"reply":"Hello!","corrected_text":" "}',
+    json.dumps({"reply": "x" * 4001, "corrected_text": None}),
+    json.dumps({"reply": "Hello!", "corrected_text": "x" * 4001}),
 ])
 def test_invalid_model_json_is_rejected_without_exposing_payload(content):
     from linguabot.integrations.llm.client import LLMInvalidResponseError
@@ -107,7 +108,7 @@ def test_invalid_model_json_is_rejected_without_exposing_payload(content):
     {}, [], None, {"error": "sensitive provider detail"},
     envelope(done=False), envelope(done="true"), envelope(done_reason="length"),
     envelope(message={}), envelope(message={"role": "assistant", "content": None}),
-    envelope(message={"role": "user", "content": '{"reply":"Hi","correction":null}'}),
+    envelope(message={"role": "user", "content": '{"reply":"Hi","corrected_text":null}'}),
 ])
 def test_invalid_or_unfinished_provider_envelope_is_rejected(payload):
     from linguabot.integrations.llm.client import LLMInvalidResponseError
@@ -235,3 +236,67 @@ def test_chat_messages_reject_unrecognized_roles():
 
     with pytest.raises(ValidationError):
         ChatMessage(role="tool", content="Synthetic")
+
+
+def test_corrected_english_is_explained_using_only_current_user_text():
+    from linguabot.integrations.llm import ChatMessage, OllamaClient
+
+    client = OllamaClient(settings(), transport=httpx.MockTransport(lambda request:
+        httpx.Response(200, json=envelope(json.dumps({
+            "reply": "We have a larger size.", "corrected_text": "These shoes are too small.",
+        })))
+    ))
+    result = asyncio.run(client.generate([
+        ChatMessage(role="user", content="He have a bag."),
+        ChatMessage(role="assistant", content="What color is it?"),
+        ChatMessage(role="user", content="These shoes is too small."),
+    ]))
+    assert result.reply == "We have a larger size."
+    assert result.correction is not None
+    assert "These shoes are too small." in result.correction
+    assert "is" in result.correction and "are" in result.correction
+    assert "have" not in result.correction and "has" not in result.correction
+
+
+def test_repeated_unchanged_current_text_is_not_a_correction():
+    result = generate(lambda request: httpx.Response(200, json=envelope(json.dumps({
+        "reply": "Hi!", "corrected_text": "Hello!",
+    }))))
+    assert result.correction is None
+
+
+def test_provider_cannot_supply_unchecked_russian_grammar_prose():
+    from linguabot.integrations.llm import LLMInvalidResponseError
+
+    with pytest.raises(LLMInvalidResponseError):
+        generate(lambda request: httpx.Response(200, json=envelope(json.dumps({
+            "reply": "Hello!", "correction": "An unchecked grammar claim.",
+        }))))
+
+
+@pytest.mark.parametrize("messages", [[], [{"role": "assistant", "content": "Old answer"}]])
+def test_missing_current_user_is_rejected_before_inference(messages):
+    from linguabot.integrations.llm import ChatMessage, LLMInvalidResponseError, OllamaClient
+
+    requests = []
+
+    def handler(request):
+        requests.append(request)
+        return httpx.Response(200, json=envelope())
+
+    client = OllamaClient(settings(), transport=httpx.MockTransport(handler))
+    with pytest.raises(LLMInvalidResponseError):
+        asyncio.run(client.generate([ChatMessage(**message) for message in messages]))
+    assert requests == []
+
+
+def test_unrepresentable_complete_feedback_is_rejected_instead_of_clipped_or_hidden():
+    from linguabot.integrations.llm import ChatMessage, LLMInvalidResponseError, OllamaClient
+
+    original = "first " * 600
+    corrected = "other " * 600
+    client = OllamaClient(settings(), transport=httpx.MockTransport(lambda request:
+        httpx.Response(200, json=envelope(json.dumps({"reply": "Hello!", "corrected_text": corrected})))
+    ))
+    with pytest.raises(LLMInvalidResponseError):
+        asyncio.run(client.generate([ChatMessage(role="user", content=original)]))

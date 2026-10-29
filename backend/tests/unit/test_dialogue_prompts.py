@@ -42,3 +42,11 @@ def test_level_is_normalized_with_safe_fallback(cefr, level, want):
     from linguabot.ai.prompts.dialogue import normalize_level
 
     assert normalize_level(cefr, level) == want
+
+
+def test_prompt_grounds_corrected_text_contract_without_generated_grammar_prose():
+    from linguabot.ai.prompts.dialogue import build_messages
+
+    instructions = build_messages(scenario="cafe", level="A1", history=[], content="Hello!")[0].content
+    assert '"corrected_text"' in instructions
+    assert '"correction"' not in instructions

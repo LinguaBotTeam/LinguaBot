@@ -5,6 +5,8 @@ from typing import Literal, Protocol
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
+from linguabot.ai.feedback import build_correction
+from linguabot.integrations.llm.response import OllamaReply
 from linguabot.integrations.llm.settings import LLMSettings
 
 
@@ -49,12 +51,15 @@ class OllamaClient:
         self._transport = transport
 
     async def generate(self, messages: list[ChatMessage]) -> ModelReply:
+        if not messages or messages[-1].role != "user":
+            raise LLMInvalidResponseError()
+        original = messages[-1].content
         payload = {
             "model": self._settings.model,
             "messages": [message.model_dump() for message in messages],
             "stream": False,
             "think": False,
-            "format": ModelReply.model_json_schema(),
+            "format": OllamaReply.model_json_schema(),
             "keep_alive": "2m",
             "options": {
                 "num_ctx": self._settings.context_tokens,
@@ -86,7 +91,9 @@ class OllamaClient:
                 or not isinstance(message.get("content"), str)
             ):
                 raise ValueError
-            return ModelReply.model_validate_json(message["content"])
+            generated = OllamaReply.model_validate_json(message["content"])
+            return ModelReply(reply=generated.reply,
+                              correction=build_correction(original, generated.corrected_text))
         except (ValueError, ValidationError):
             raise LLMInvalidResponseError() from None
 
