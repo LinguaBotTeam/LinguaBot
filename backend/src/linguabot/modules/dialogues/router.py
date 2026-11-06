@@ -36,9 +36,9 @@ async def create_dialogue(
     return await service.create_dialogue(session, current_user.id, data)
 
 
-@router.get("",
-            response_model=list[DialogueRead],
-            summary="Список своих диалогов")
+@router.get(
+    "", response_model=list[DialogueRead], summary="Список своих диалогов"
+)
 async def list_dialogues(
     current_user: CurrentUser,
     session: SessionDep,
@@ -72,7 +72,12 @@ async def change_project(
     "/{dialogue_id}/messages",
     response_model=MessagePair,
     status_code=status.HTTP_201_CREATED,
-    summary="Сохранить сообщение и получить ответ заглушки",
+    summary="Отправить сообщение и получить ответ ИИ",
+    description=(
+        "Практика английского по сценарию диалога; описание правок на русском "
+        "сохраняется в correction сообщения пользователя. При сбое модели "
+        "пара не записывается. Одновременный ход в тот же диалог — 409."
+    ),
 )
 async def send_message(
     dialogue_id: DialogueId,

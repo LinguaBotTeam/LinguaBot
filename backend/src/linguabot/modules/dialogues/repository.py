@@ -54,8 +54,12 @@ class DialogueRepository:
     async def add_message(
         self, *, dialogue_id: int,
         role: Literal["user", "assistant"], content: str,
+        correction: str | None = None,
     ) -> Message:
-        message = Message(dialogue_id=dialogue_id, role=role, content=content)
+        message = Message(
+            dialogue_id=dialogue_id, role=role, content=content,
+            correction=correction,
+        )
         self.session.add(message)
         # Отдельный flush сохраняет порядок user → assistant даже при равном
         # времени.
@@ -73,3 +77,20 @@ class DialogueRepository:
             .offset(offset)
         )
         return list(result)
+
+    async def get_recent_messages(self, dialogue_id: int) -> list[Message]:
+        """Bounded chronological inference context; pagination is unchanged."""
+        result = await self.session.scalars(
+            select(Message)
+            .where(Message.dialogue_id == dialogue_id)
+            .order_by(Message.id.desc())
+            .limit(12)
+        )
+        recent = []
+        size = 0
+        for message in result:
+            size += len(message.content.encode("utf-8"))
+            if size > 4000:
+                break
+            recent.append(message)
+        return list(reversed(recent))
