@@ -1,4 +1,6 @@
-"""Describe proposed English edits faithfully without generating grammar rules."""
+"""
+Describe proposed English edits faithfully without generating grammar rules.
+"""
 
 from dataclasses import dataclass
 from difflib import SequenceMatcher
@@ -19,7 +21,9 @@ class _Edit:
 
 
 def _find_edits(original: str, corrected: str) -> list[_Edit]:
-    """Keep word, whitespace and punctuation tokens plus exact source offsets."""
+    """
+    Keep word, whitespace and punctuation tokens plus exact source offsets.
+    """
     source = list(re.finditer(r"\w+|\s+|[^\w\s]", original))
     target = re.findall(r"\w+|\s+|[^\w\s]", corrected)
     offsets = [token.start() for token in source] + [len(original)]
@@ -32,18 +36,23 @@ def _find_edits(original: str, corrected: str) -> list[_Edit]:
             before=original[offsets[first]:offsets[last]],
             after="".join(target[target_first:target_last]),
         )
-        for operation, first, last, target_first, target_last in matcher.get_opcodes()
+        for operation, first, last, target_first, target_last in (
+            matcher.get_opcodes()
+        )
         if operation != "equal"
     ]
 
 
 def build_correction(original: str, corrected: str | None) -> str | None:
-    """Render the entire proposal and every edit; do not certify its grammar."""
+    """
+    Render the entire proposal and every edit; do not certify its grammar.
+    """
     if corrected is None or corrected == original:
         return None
 
     lines = [
-        f"Предлагаемое исправление: {json.dumps(corrected, ensure_ascii=False)}",
+        "Предлагаемое исправление: "
+        f"{json.dumps(corrected, ensure_ascii=False)}",
         "Изменения:",
     ]
     for number, edit in enumerate(_find_edits(original, corrected), start=1):
@@ -58,9 +67,13 @@ def build_correction(original: str, corrected: str | None) -> str | None:
         lines.append(f"{number}. {description}")
     feedback = "\n".join(lines)
     if len(feedback) > 3000:
-        raise FeedbackError("Complete correction exceeds the feedback length limit.")
+        raise FeedbackError(
+            "Complete correction exceeds the feedback length limit."
+        )
     try:
         feedback.encode("utf-8")
     except UnicodeEncodeError:
-        raise FeedbackError("Complete correction is not valid Unicode text.") from None
+        raise FeedbackError(
+            "Complete correction is not valid Unicode text."
+        ) from None
     return feedback
