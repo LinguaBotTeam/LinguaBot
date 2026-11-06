@@ -180,13 +180,15 @@ SSH-ключ должен быть настроен на вашем компью
 
 Реализованы регистрация и вход: backend на FastAPI с SQLAlchemy и JWT-токенами, база данных по умолчанию — SQLite (`backend/linguabot.db`). Формы входа и регистрации открываются в модальном окне поверх главной страницы (`frontend/index.html`, логика — в `frontend/src/app/auth-modal.js`).
 
-Backend:
+Backend (команда миграции ниже — для новой пустой базы;
+для существующей сначала выполните [инструкцию обновления](backend/migrations/README.md)):
 
 ```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m uvicorn linguabot.main:app --reload
+.\.venv\Scripts\python.exe -m alembic upgrade head
+.\.venv\Scripts\python.exe -m uvicorn linguabot.main:app --app-dir src --reload
 ```
 
 Сервер отвечает на `http://127.0.0.1:8000`, интерактивная документация API — на `http://127.0.0.1:8000/docs`. Настройки читаются из файла `backend/.env`; образец значений — `backend/.env.example`. Для перехода на PostgreSQL укажите `DATABASE_URL` вида `postgresql+asyncpg://...`.
