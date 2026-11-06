@@ -3,9 +3,12 @@
 from typing import Literal, Protocol
 
 import httpx
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+from pydantic import (
+    BaseModel, ConfigDict, Field, ValidationError, field_validator,
+)
 
 from linguabot.ai.feedback import build_correction
+from linguabot.integrations.llm.provider import ProviderSettings
 from linguabot.integrations.llm.response import OllamaReply
 from linguabot.integrations.llm.settings import LLMSettings
 
@@ -16,7 +19,9 @@ class ChatMessage(BaseModel):
 
 
 class ModelReply(BaseModel):
-    model_config = ConfigDict(strict=True, extra="forbid", str_strip_whitespace=True)
+    model_config = ConfigDict(
+        strict=True, extra="forbid", str_strip_whitespace=True
+    )
 
     reply: str = Field(min_length=1, max_length=4000)
     correction: str | None = Field(max_length=3000)
@@ -42,11 +47,16 @@ class LLMUnavailableError(LLMError):
 
 class LLMInvalidResponseError(LLMError):
     def __init__(self) -> None:
-        super().__init__("The local language model returned an invalid response.")
+        super().__init__(
+            "The local language model returned an invalid response."
+        )
 
 
 class OllamaClient:
-    def __init__(self, settings: LLMSettings, *, transport: httpx.AsyncBaseTransport | None = None):
+    def __init__(
+        self, settings: LLMSettings, *,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ):
         self._settings = settings
         self._transport = transport
 
@@ -82,7 +92,11 @@ class OllamaClient:
 
         try:
             body = response.json()
-            if not isinstance(body, dict) or body.get("done") is not True or body.get("done_reason") == "length":
+            if (
+                not isinstance(body, dict)
+                or body.get("done") is not True
+                or body.get("done_reason") == "length"
+            ):
                 raise ValueError
             message = body.get("message")
             if (
@@ -92,12 +106,23 @@ class OllamaClient:
             ):
                 raise ValueError
             generated = OllamaReply.model_validate_json(message["content"])
-            return ModelReply(reply=generated.reply,
-                              correction=build_correction(original, generated.corrected_text))
+            return ModelReply(
+                reply=generated.reply,
+                correction=build_correction(
+                    original, generated.corrected_text
+                ),
+            )
         except (ValueError, ValidationError):
             raise LLMInvalidResponseError() from None
 
 
 def get_language_model() -> LanguageModel:
-    """Construct the current provider lazily so callers can replace this boundary."""
+    """Construct only the explicitly selected provider, without network I/O."""
+    if ProviderSettings().provider == "cloudflare":
+        from linguabot.integrations.llm.cloudflare import CloudflareClient
+        from linguabot.integrations.llm.cloudflare_settings import (
+            CloudflareSettings,
+        )
+
+        return CloudflareClient(CloudflareSettings())
     return OllamaClient(LLMSettings())

@@ -31,10 +31,14 @@ _active_dialogues: set[int] = set()
 
 def _admit(dialogue_id: int) -> None:
     if not _admission_mutex.acquire(blocking=False):
-        raise APIError(409, "conflict", "Повторите отправку сообщения чуть позже")
+        raise APIError(
+            409, "conflict", "Повторите отправку сообщения чуть позже"
+        )
     try:
         if dialogue_id in _active_dialogues:
-            raise APIError(409, "conflict", "Ответ в этом диалоге ещё готовится")
+            raise APIError(
+                409, "conflict", "Ответ в этом диалоге ещё готовится"
+            )
         _active_dialogues.add(dialogue_id)
     finally:
         _admission_mutex.release()
@@ -46,7 +50,9 @@ async def _owned_dialogue(
     dialogue = await repository.get_owned(dialogue_id, user_id)
     if dialogue is None:
         # Одинаковый ответ не раскрывает наличие диалога другого пользователя.
-        raise APIError(status_code=404, code="not_found", message="Диалог не найден")
+        raise APIError(
+            status_code=404, code="not_found", message="Диалог не найден"
+        )
     return dialogue
 
 
@@ -87,22 +93,34 @@ async def send_message(
                 language_model = get_language_model()
             except ValidationError:
                 raise LLMUnavailableError() from None
-        assessment = await TestResultRepository(session).get_latest_by_user(user_id)
-        level = normalize_level(assessment.cefr, assessment.level) if assessment else "A1"
+        assessment = await TestResultRepository(session).get_latest_by_user(
+            user_id
+        )
+        level = (
+            normalize_level(assessment.cefr, assessment.level)
+            if assessment else "A1"
+        )
         history = await repository.get_recent_messages(dialogue_id)
         messages = build_messages(
             scenario=dialogue.scenario, level=level,
-            history=[ChatMessage(role=message.role, content=message.content) for message in history],
+            history=[
+                ChatMessage.model_validate({
+                    "role": message.role, "content": message.content,
+                })
+                for message in history
+            ],
             content=data.content,
         )
         generated = await language_model.generate(messages)
-        # Validate the replaceable boundary too, before touching persistent state.
+        # Validate the boundary too, before touching persistent state.
         reply = ModelReply.model_validate(
-            generated.model_dump() if isinstance(generated, ModelReply) else generated
+            generated.model_dump()
+            if isinstance(generated, ModelReply) else generated
         )
         dialogue.updated_at = datetime.now(timezone.utc)
         user_message = await repository.add_message(
-            dialogue_id=dialogue.id, role="user", content=data.content, correction=reply.correction
+            dialogue_id=dialogue.id, role="user", content=data.content,
+            correction=reply.correction,
         )
         assistant_message = await repository.add_message(
             dialogue_id=dialogue.id, role="assistant", content=reply.reply
@@ -111,15 +129,19 @@ async def send_message(
             user_message=MessageRead.model_validate(user_message),
             assistant_message=MessageRead.model_validate(assistant_message),
         )
-        # CurrentUser уже начал транзакцию этой сессии. Обе записи фиксируем вместе.
+        # CurrentUser начал транзакцию. Обе записи фиксируем вместе.
         await session.commit()
         return result
     except LLMUnavailableError:
         await session.rollback()
-        raise APIError(503, "service_unavailable", "Локальная модель временно недоступна") from None
+        raise APIError(
+            503, "service_unavailable", "Модель ИИ временно недоступна"
+        ) from None
     except (LLMInvalidResponseError, ValidationError):
         await session.rollback()
-        raise APIError(502, "bad_gateway", "Модель вернула некорректный ответ") from None
+        raise APIError(
+            502, "bad_gateway", "Модель вернула некорректный ответ"
+        ) from None
     except BaseException:
         await session.rollback()
         raise
@@ -137,5 +159,7 @@ async def get_history(
 ) -> list[MessageRead]:
     repository = DialogueRepository(session)
     await _owned_dialogue(repository, user_id, dialogue_id)
-    messages = await repository.get_messages(dialogue_id, limit=limit, offset=offset)
+    messages = await repository.get_messages(
+        dialogue_id, limit=limit, offset=offset
+    )
     return [MessageRead.model_validate(message) for message in messages]

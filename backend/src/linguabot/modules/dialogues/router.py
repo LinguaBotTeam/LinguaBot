@@ -34,25 +34,29 @@ async def create_dialogue(
     return await service.create_dialogue(session, current_user.id, data)
 
 
-@router.get("", response_model=list[DialogueRead], summary="Список своих диалогов")
+@router.get(
+    "", response_model=list[DialogueRead], summary="Список своих диалогов"
+)
 async def list_dialogues(
     current_user: CurrentUser,
     session: SessionDep,
     limit: PageLimit = 100,
     offset: PageOffset = 0,
 ) -> list[DialogueRead]:
-    return await service.list_dialogues(session, current_user.id, limit, offset)
+    return await service.list_dialogues(
+        session, current_user.id, limit, offset
+    )
 
 
 @router.post(
     "/{dialogue_id}/messages",
     response_model=MessagePair,
     status_code=status.HTTP_201_CREATED,
-    summary="Отправить сообщение и получить ответ локального ИИ",
+    summary="Отправить сообщение и получить ответ ИИ",
     description=(
-        "Практика английского по сценарию диалога; пояснение ошибки на русском "
-        "сохраняется в correction сообщения пользователя. При сбое модели пара "
-        "не записывается. Одновременная отправка в тот же диалог возвращает 409."
+        "Практика английского по сценарию диалога; описание правок на русском "
+        "сохраняется в correction сообщения пользователя. При сбое модели "
+        "пара не записывается. Одновременный ход в тот же диалог — 409."
     ),
 )
 async def send_message(
@@ -61,7 +65,9 @@ async def send_message(
     current_user: CurrentUser,
     session: SessionDep,
 ) -> MessagePair:
-    return await service.send_message(session, current_user.id, dialogue_id, data)
+    return await service.send_message(
+        session, current_user.id, dialogue_id, data
+    )
 
 
 @router.get(
@@ -76,4 +82,6 @@ async def get_history(
     limit: PageLimit = 100,
     offset: PageOffset = 0,
 ) -> list[MessageRead]:
-    return await service.get_history(session, current_user.id, dialogue_id, limit, offset)
+    return await service.get_history(
+        session, current_user.id, dialogue_id, limit, offset
+    )

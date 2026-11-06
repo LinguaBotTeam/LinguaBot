@@ -14,12 +14,13 @@ class CloudflareSettings(BaseSettings):
         extra="ignore",
         frozen=True,
         hide_input_in_errors=True,
+        validate_default=True,
     )
 
     account_id: str = Field(
-        min_length=32, max_length=32, pattern=r"^[a-fA-F0-9]{32}$"
+        default="", min_length=32, max_length=32, pattern=r"^[a-fA-F0-9]{32}$"
     )
-    api_token: SecretStr
+    api_token: SecretStr = SecretStr("")
     model: Literal["@cf/meta/llama-3.3-70b-instruct-fp8-fast"] = (
         "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
     )
