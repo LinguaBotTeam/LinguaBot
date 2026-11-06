@@ -8,6 +8,7 @@ from linguabot.modules.auth.dependencies import CurrentUser, SessionDep
 from linguabot.modules.dialogues import service
 from linguabot.modules.dialogues.schemas import (
     DialogueCreate,
+    DialogueProjectChange,
     DialogueRead,
     MessageCreate,
     MessagePair,
@@ -20,6 +21,7 @@ router = APIRouter()
 DialogueId = Annotated[int, Path(ge=1, le=2**31 - 1)]
 PageLimit = Annotated[int, Query(ge=1, le=100)]
 PageOffset = Annotated[int, Query(ge=0, le=2**63 - 1)]
+ProjectFilter = Annotated[int | None, Query(ge=1, le=2**31 - 1)]
 
 
 @router.post(
@@ -34,14 +36,36 @@ async def create_dialogue(
     return await service.create_dialogue(session, current_user.id, data)
 
 
-@router.get("", response_model=list[DialogueRead], summary="Список своих диалогов")
+@router.get("",
+            response_model=list[DialogueRead],
+            summary="Список своих диалогов")
 async def list_dialogues(
     current_user: CurrentUser,
     session: SessionDep,
     limit: PageLimit = 100,
     offset: PageOffset = 0,
+    project_id: ProjectFilter = None,
+    unassigned: bool = False,
 ) -> list[DialogueRead]:
-    return await service.list_dialogues(session, current_user.id, limit, offset)
+    return await service.list_dialogues(
+        session, current_user.id, limit, offset,
+        project_id=project_id, unassigned=unassigned,
+    )
+
+
+@router.patch(
+    "/{dialogue_id}/project", response_model=DialogueRead,
+    summary="Перенести свой диалог или убрать его из проекта",
+)
+async def change_project(
+    dialogue_id: DialogueId,
+    data: DialogueProjectChange,
+    current_user: CurrentUser,
+    session: SessionDep,
+) -> DialogueRead:
+    return await service.change_project(
+        session, current_user.id, dialogue_id, data
+    )
 
 
 @router.post(
@@ -56,7 +80,9 @@ async def send_message(
     current_user: CurrentUser,
     session: SessionDep,
 ) -> MessagePair:
-    return await service.send_message(session, current_user.id, dialogue_id, data)
+    return await service.send_message(
+        session, current_user.id, dialogue_id, data
+    )
 
 
 @router.get(
@@ -71,4 +97,6 @@ async def get_history(
     limit: PageLimit = 100,
     offset: PageOffset = 0,
 ) -> list[MessageRead]:
-    return await service.get_history(session, current_user.id, dialogue_id, limit, offset)
+    return await service.get_history(
+        session, current_user.id, dialogue_id, limit, offset
+    )

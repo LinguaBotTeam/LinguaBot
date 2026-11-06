@@ -6,6 +6,7 @@ from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from linguabot.db.base import Base
+from linguabot.modules.dialogues.projects.models import DialogueProject
 
 
 class Dialogue(Base):
@@ -14,6 +15,12 @@ class Dialogue(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    project_id: Mapped[int | None] = mapped_column(
+        ForeignKey(
+            DialogueProject.id, ondelete="SET NULL",
+            name="fk_dialogues_project_id",
+        ), index=True,
     )
     title: Mapped[str] = mapped_column(String(160))
     scenario: Mapped[str] = mapped_column(String(64), default="free_chat")

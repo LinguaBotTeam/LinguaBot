@@ -11,12 +11,20 @@ class DialogueCreate(BaseModel):
 
     title: str = Field(default="Новый диалог", min_length=1, max_length=160)
     scenario: str = Field(default="free_chat", min_length=1, max_length=64)
+    project_id: int | None = Field(default=None, ge=1, le=2**31 - 1)
+
+
+class DialogueProjectChange(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    project_id: int | None = Field(ge=1, le=2**31 - 1)
 
 
 class DialogueRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    project_id: int | None
     title: str
     scenario: str
     status: Literal["active", "completed"]

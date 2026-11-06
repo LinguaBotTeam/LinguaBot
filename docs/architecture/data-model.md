@@ -208,6 +208,34 @@ class TestResult(Base):
 
 Новые модели нужно импортировать в `init_models()` (`backend/src/linguabot/db/session.py`), чтобы таблицы создавались при старте приложения. При переходе на Alembic те же модели станут основой для миграций.
 
+## Реализованное расширение: проекты диалогов
+
+Таблица `dialogue_projects` в
+`backend/src/linguabot/modules/dialogues/projects/models.py` содержит:
+`id` (Integer PK), `user_id` (FK users.id, CASCADE, индекс),
+`name` (String 160), `created_at` (DateTime с серверным временем).
+У `dialogues` добавлен nullable `project_id` с индексом и FK
+на dialogue_projects.id, ON DELETE SET NULL. Остальные сущности
+и бизнес-логика сохраняются. У старых диалогов project_id равен NULL.
+
+```mermaid
+erDiagram
+    USERS ||--o{ DIALOGUE_PROJECTS : owns
+    DIALOGUE_PROJECTS o|--o{ DIALOGUES : groups
+    DIALOGUES ||--o{ MESSAGES : contains
+```
+
+Проект принадлежит одному пользователю. API проверяет владельца проекта
+и диалога при создании, фильтрации и переносе. Общего доступа нет.
+Группировка не меняет сценарий или контекст сообщений отдельного чата.
+Удаление проектов через API пока не предоставляется.
+
+Изменение существующей базы выполняется Alembic, а не create_all:
+см. [миграции](../../backend/migrations/README.md) и
+[контракт API](../api/dialogue-projects.md).
+Пример со справочником languages выше остаётся архитектурным эскизом;
+фактическая baseline-схема описана в migrations/legacy_schema.py.
+
 ## Принятые допущения
 
 - **Уровень**: хранится грубый `level` + необязательный `cefr`, поскольку в требованиях упоминаются оба (начальный/средний/продвинутый и Upper-Intermediate).
