@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = window.LINGUABOT_API_URL || 'http://127.0.0.1:8000/api/v1';
+  const API_BASE = window.LINGUABOT_API_URL || '/api/v1';
   const TOKEN_KEY = 'linguabot-token';
   const USER_KEY = 'linguabot-user';
 
@@ -125,6 +125,25 @@
     // Последний результат. Если тест не пройден — code === 'result_not_found'.
     getResult: function () {
       return request('/assessment/result', { method: 'GET' });
+    },
+    listDialogues: function (limit, offset) {
+      return request('/dialogues?' + new URLSearchParams({ limit, offset }));
+    },
+    createDialogue: function (title, scenario) {
+      return request('/dialogues', {
+        method: 'POST',
+        body: JSON.stringify({ title, scenario }),
+      });
+    },
+    getDialogueMessages: function (id, limit, offset) {
+      return request('/dialogues/' + encodeURIComponent(id) + '/messages?' +
+        new URLSearchParams({ limit, offset }));
+    },
+    sendDialogueMessage: function (id, content) {
+      return request('/dialogues/' + encodeURIComponent(id) + '/messages', {
+        method: 'POST',
+        body: JSON.stringify({ content }),
+      });
     },
     getToken: getToken,
     getStoredUser: getStoredUser,
