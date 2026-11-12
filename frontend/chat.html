@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>Практика в чате — LinguaBot</title>
+  <script>
+    try {
+      if (localStorage.getItem('linguabot-theme') === 'light') {
+        document.documentElement.dataset.theme = 'light';
+      }
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="./src/styles/style.css?v=3">
+  <link rel="stylesheet" href="./src/styles/auth.css?v=3">
+  <link rel="stylesheet" href="./src/styles/chat.css?v=1">
+</head>
+<body>
+  <header class="header container">
+    <a class="logo" href="./index.html"><span aria-hidden="true">L</span> LinguaBot</a>
+    <div class="header-actions">
+      <a class="nav-link" href="./index.html">На главную</a>
+      <a class="nav-link" href="./assessment.html">Тест уровня</a>
+      <div class="auth-actions" data-auth-actions></div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить светлую тему">
+        <span id="theme-icon" aria-hidden="true">☀</span>
+        <span id="theme-label">Светлая тема</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="chat-page container" data-chat>
+    <section class="chat-intro" aria-labelledby="chat-title">
+      <p class="badge">Шаг 2 · Разговорная практика</p>
+      <h1 id="chat-title">Практика в чате</h1>
+      <p class="description">Закажите что-нибудь в кафе на английском. LinguaBot ответит и покажет, как поправить фразу, если в ней есть ошибка.</p>
+    </section>
+
+    <section class="chat-card chat-gate" data-chat-auth hidden>
+      <h2>Войдите, чтобы начать</h2>
+      <p>Диалоги и исправления сохраняются в вашем аккаунте.</p>
+      <div class="chat-auth-buttons">
+        <button class="button" type="button" data-chat-auth-mode="login">Войти</button>
+        <button class="button chat-secondary" type="button" data-chat-auth-mode="register">Регистрация</button>
+      </div>
+    </section>
+
+    <div class="chat-layout" data-chat-workspace hidden>
+      <aside class="chat-card chat-sidebar" aria-labelledby="dialogue-list-title">
+        <h2 id="dialogue-list-title">Мои диалоги</h2>
+        <button class="button chat-new" type="button" data-chat-create>
+          <span aria-hidden="true">+</span> Новый диалог
+        </button>
+        <ul class="chat-dialogue-list" data-chat-dialogues></ul>
+        <p class="chat-muted" data-chat-list-empty hidden>Здесь появятся ваши диалоги.</p>
+      </aside>
+
+      <section class="chat-card chat-panel" aria-labelledby="current-dialogue-title">
+        <div class="chat-panel-header">
+          <span class="chat-bot-icon" aria-hidden="true">L</span>
+          <div>
+            <h2 id="current-dialogue-title" data-chat-name>В кафе</h2>
+            <p class="chat-muted" data-chat-scenario>Текстовый диалог · Английский</p>
+          </div>
+        </div>
+
+        <div class="chat-thread" data-chat-thread tabindex="0" aria-label="Переписка">
+          <p class="chat-empty" data-chat-empty>Создайте диалог или выберите сохранённый.</p>
+          <ol class="chat-messages" data-chat-messages role="log" aria-live="polite" aria-label="Сообщения"></ol>
+        </div>
+
+        <div class="chat-controls">
+          <p class="chat-status" data-chat-status role="status"></p>
+          <p class="form-error" data-chat-error role="alert" hidden></p>
+          <button class="button chat-secondary" type="button" data-chat-reload hidden>Повторить загрузку</button>
+
+          <form class="chat-form" data-chat-form hidden>
+            <button class="chat-example" type="button" data-chat-example hidden>
+              Начать с примера: <span lang="en">I would like a tea, please.</span>
+            </button>
+            <label for="chat-input">Ваше сообщение</label>
+            <div class="chat-composer">
+              <textarea id="chat-input" name="content" rows="2" maxlength="4000" placeholder="Напишите фразу на английском…" required aria-describedby="chat-input-help"></textarea>
+              <button class="button" type="submit" data-chat-send>Отправить <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="chat-muted chat-shortcut" id="chat-input-help">Enter — отправить · Shift+Enter — новая строка</p>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <noscript><p class="chat-card chat-gate">Включите JavaScript, чтобы открыть чат.</p></noscript>
+  </main>
+
+  <footer class="footer container">LinguaBot · Языки становятся ближе</footer>
+
+  <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-dialog-title">
+    <button class="auth-close" type="button" data-auth-close aria-label="Закрыть">×</button>
+    <h2 id="auth-dialog-title" data-auth-title>Вход в аккаунт</h2>
+    <p class="auth-subtitle" data-auth-subtitle>Продолжай обучение с того места, где остановился.</p>
+
+    <div class="auth-panel" data-auth-panel="login">
+      <form class="form" data-auth-form="login" novalidate>
+        <p class="form-error" data-auth-error role="alert" hidden></p>
+        <p class="form-success" data-auth-success role="status" hidden></p>
+
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="login-password">Пароль</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Ваш пароль" minlength="8" required>
+        </div>
+
+        <button class="button" type="submit">Войти</button>
+      </form>
+
+      <p class="auth-alt">Нет аккаунта? <button class="link-button" type="button" data-auth-switch="register">Зарегистрироваться</button></p>
+    </div>
+
+    <div class="auth-panel" data-auth-panel="register" hidden>
+      <form class="form" data-auth-form="register" novalidate>
+        <p class="form-error" data-auth-error role="alert" hidden></p>
+
+        <div class="field">
+          <label for="register-name">Имя</label>
+          <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Как к тебе обращаться" minlength="2" required>
+        </div>
+
+        <div class="field">
+          <label for="register-email">Email</label>
+          <input id="register-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="register-password">Пароль</label>
+          <input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Минимум 8 символов" minlength="8" required>
+        </div>
+
+        <button class="button" type="submit">Зарегистрироваться</button>
+      </form>
+
+      <p class="auth-alt">Уже есть аккаунт? <button class="link-button" type="button" data-auth-switch="login">Войти</button></p>
+      <p class="auth-hint">Регистрируясь, ты соглашаешься использовать LinguaBot в учебных целях.</p>
+    </div>
+  </dialog>
+
+  <script src="./src/api/client.js?v=4"></script>
+  <script src="./src/app/script.js?v=3"></script>
+  <script src="./src/app/auth-modal.js?v=3"></script>
+  <script src="./src/app/session.js?v=3"></script>
+  <script src="./src/app/chat.js?v=1"></script>
+</body>
+</html>

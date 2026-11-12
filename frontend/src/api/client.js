@@ -126,6 +126,25 @@
     getResult: function () {
       return request('/assessment/result', { method: 'GET' });
     },
+    listDialogues: function (limit, offset) {
+      return request('/dialogues?' + new URLSearchParams({ limit, offset }));
+    },
+    createDialogue: function (title, scenario) {
+      return request('/dialogues', {
+        method: 'POST',
+        body: JSON.stringify({ title, scenario }),
+      });
+    },
+    getDialogueMessages: function (id, limit, offset) {
+      return request('/dialogues/' + encodeURIComponent(id) + '/messages?' +
+        new URLSearchParams({ limit, offset }));
+    },
+    sendDialogueMessage: function (id, content) {
+      return request('/dialogues/' + encodeURIComponent(id) + '/messages', {
+        method: 'POST',
+        body: JSON.stringify({ content }),
+      });
+    },
     getToken: getToken,
     getStoredUser: getStoredUser,
     saveSession: saveSession,
