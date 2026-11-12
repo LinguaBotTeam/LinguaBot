@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = window.LINGUABOT_API_URL || 'http://127.0.0.1:8000/api/v1';
+  const API_BASE = window.LINGUABOT_API_URL || '/api/v1';
   const TOKEN_KEY = 'linguabot-token';
   const USER_KEY = 'linguabot-user';
 
