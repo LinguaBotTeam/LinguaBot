@@ -12,14 +12,15 @@
       }
     } catch {}
   </script>
-  <link rel="stylesheet" href="./src/styles/style.css?v=2">
-  <link rel="stylesheet" href="./src/styles/auth.css?v=2">
+  <link rel="stylesheet" href="./src/styles/style.css?v=3">
+  <link rel="stylesheet" href="./src/styles/auth.css?v=3">
 </head>
 <body>
   <header class="header container">
     <a class="logo" href="#"><span aria-hidden="true">L</span> LinguaBot</a>
     <div class="header-actions">
       <a class="nav-link" href="#features">Возможности</a>
+      <a class="nav-link" href="./assessment.html">Тест уровня</a>
       <div class="auth-actions" data-auth-actions></div>
       <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить светлую тему">
         <span id="theme-icon" aria-hidden="true">☀</span>
@@ -34,7 +35,7 @@
         <p class="badge">Твой ИИ-помощник в изучении языков</p>
         <h1 id="hero-title">Твой язык.<br><span>Твой темп.</span></h1>
         <p class="description">Практикуй разговорную речь, разбирай ошибки и открывай новое. Шаг за шагом — к уверенности в общении.</p>
-        <button class="button" type="button" data-start>Начать обучение <span aria-hidden="true">→</span></button>
+        <a class="button" href="./assessment.html">Начать обучение <span aria-hidden="true">→</span></a>
       </div>
 
       <aside class="preview" aria-label="Пример диалога с LinguaBot">
@@ -57,12 +58,6 @@
   </main>
 
   <footer class="footer container">LinguaBot · Языки становятся ближе</footer>
-
-  <dialog class="notice" id="start-notice" aria-labelledby="notice-title" aria-describedby="notice-description">
-    <h2 id="notice-title">Скоро начнём!</h2>
-    <p id="notice-description">Мы готовим LinguaBot к первым занятиям. Возможность начать обучение появится позже.</p>
-    <form method="dialog"><button class="button" autofocus>Понятно</button></form>
-  </dialog>
 
   <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-dialog-title">
     <button class="auth-close" type="button" data-auth-close aria-label="Закрыть">×</button>
@@ -117,9 +112,9 @@
     </div>
   </dialog>
 
-  <script src="./src/api/client.js?v=2"></script>
-  <script src="./src/app/script.js?v=2"></script>
-  <script src="./src/app/auth-modal.js?v=2"></script>
-  <script src="./src/app/session.js?v=2"></script>
+  <script src="./src/api/client.js?v=3"></script>
+  <script src="./src/app/script.js?v=3"></script>
+  <script src="./src/app/auth-modal.js?v=3"></script>
+  <script src="./src/app/session.js?v=3"></script>
 </body>
 </html>

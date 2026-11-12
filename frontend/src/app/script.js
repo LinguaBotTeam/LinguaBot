@@ -23,11 +23,3 @@ themeToggle.addEventListener('click', () => {
     // Переключение работает даже при запрете сохранения в браузере.
   }
 });
-
-const startNotice = document.querySelector('#start-notice');
-
-document.querySelectorAll('[data-start]').forEach((button) => {
-  button.addEventListener('click', () => {
-    startNotice.showModal();
-  });
-});

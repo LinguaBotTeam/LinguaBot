@@ -1,0 +1,248 @@
+.assessment {
+  padding-block: 24px 64px;
+}
+
+.assessment-intro {
+  max-width: 640px;
+  margin-bottom: 28px;
+}
+
+.assessment-intro h1 {
+  margin-block: 18px 12px;
+  font-size: clamp(34px, 5vw, 52px);
+}
+
+.assessment-intro .description {
+  margin-bottom: 0;
+}
+
+.assessment-card {
+  width: min(760px, 100%);
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 20px 70px var(--shadow);
+}
+
+.assessment-card[hidden] {
+  display: none;
+}
+
+.assessment-card h2 {
+  margin-bottom: 12px;
+}
+
+.assessment-card h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.assessment-text {
+  color: var(--muted);
+}
+
+.assessment-status {
+  color: var(--muted);
+  text-align: center;
+}
+
+.assessment-facts {
+  margin: 20px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.assessment-facts li + li {
+  margin-top: 6px;
+}
+
+.assessment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.assessment-actions-start {
+  justify-content: flex-start;
+}
+
+.button-secondary {
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--text);
+}
+
+.button-secondary:hover {
+  border-color: var(--accent);
+  background: var(--background);
+}
+
+.assessment-progress {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 26px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.progress-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bot-background);
+}
+
+.progress-track > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.question-text {
+  margin-bottom: 20px;
+  font-size: clamp(21px, 3vw, 27px);
+  line-height: 1.35;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--background);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.option:hover {
+  border-color: var(--accent);
+}
+
+.option:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--user-background);
+}
+
+.option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.option span {
+  min-width: 0;
+}
+
+.assessment-form .form-error {
+  margin-top: 16px;
+}
+
+.result-eyebrow {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.result-level {
+  margin-bottom: 6px;
+  font-size: clamp(30px, 4vw, 42px);
+  letter-spacing: -0.8px;
+}
+
+.result-score {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.result-date {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.result-review {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.review-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.review-item {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--background);
+}
+
+.review-question {
+  font-weight: 600;
+}
+
+.review-answer {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.review-verdict {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.review-verdict.is-correct {
+  background: var(--user-background);
+  color: var(--correction);
+}
+
+.review-verdict.is-wrong {
+  background: var(--bot-background);
+  color: var(--correction);
+}
+
+@media (max-width: 600px) {
+  .assessment-card {
+    padding: 22px;
+  }
+
+  .assessment-actions {
+    flex-direction: column;
+  }
+
+  .assessment-actions .button {
+    width: 100%;
+  }
+
+  .assessment-actions-start {
+    flex-direction: column;
+  }
+}
