@@ -46,6 +46,7 @@
       logoutButton.addEventListener('click', function () {
         api.clearSession();
         renderGuest();
+        document.dispatchEvent(new CustomEvent('linguabot:auth-changed'));
       });
     }
   }
