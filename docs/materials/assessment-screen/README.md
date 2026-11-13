@@ -13,16 +13,19 @@
 1. Запустить backend из каталога `backend`:
 
    ```powershell
+   $env:PYTHONPATH = "src"
    .\.venv\Scripts\python.exe -m alembic upgrade head
    .\.venv\Scripts\python.exe -m uvicorn linguabot.main:app --app-dir src --reload
    ```
+
+   `PYTHONPATH=src` обязателен для Alembic, если пакет `linguabot` не установлен в venv: иначе команда падает с `ModuleNotFoundError`.
 
 2. Установить Playwright и браузер в отдельном каталоге, затем скопировать сценарии.
 3. Запустить сценарии из каталога с `playwright.config.js`, где `baseURL` равен `http://127.0.0.1:8000`.
 
 ## Результат проверки
 
-- `pytest -o pythonpath=src tests/integration/test_assessment.py` — 11 passed.
+- `pytest -o pythonpath=src tests/integration/test_assessment.py` — 11 passed (запускалось с `PYTHONPATH=src`).
 - Браузерный сценарий входа, теста, сохранения результата и повторного входа — passed.
 - Мобильный вид 390 px без горизонтальной прокрутки — passed.
 - `node --check` для JS-файлов экрана — без ошибок.

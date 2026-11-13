@@ -187,9 +187,12 @@ Backend (команда миграции ниже — для новой пуст
 cd backend
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+$env:PYTHONPATH = "src"
 .\.venv\Scripts\python.exe -m alembic upgrade head
 .\.venv\Scripts\python.exe -m uvicorn linguabot.main:app --app-dir src --reload
 ```
+
+Строка `$env:PYTHONPATH = "src"` нужна, чтобы Alembic и дочерние процессы тестов находили пакет `linguabot` без установки проекта в venv.
 
 Сервер отвечает на `http://127.0.0.1:8000`, интерактивная документация API — на `http://127.0.0.1:8000/docs`. Настройки читаются из файла `backend/.env`; образец значений — `backend/.env.example`. Для перехода на PostgreSQL укажите `DATABASE_URL` вида `postgresql+asyncpg://...`.
 
@@ -198,6 +201,7 @@ python -m venv .venv
 ```powershell
 cd backend
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+$env:PYTHONPATH = "src"
 .\.venv\Scripts\python.exe -m pytest -o pythonpath=src
 ```
 

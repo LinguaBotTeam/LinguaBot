@@ -4,6 +4,10 @@
 URL берётся из `DATABASE_URL` окружения или личного `.env`. Не записывайте
 учётные данные в `alembic.ini`, Git или сообщения об ошибках.
 
+Если пакет `linguabot` не установлен в окружение, задайте `PYTHONPATH=src`
+(PowerShell: `$env:PYTHONPATH = "src"`), иначе Alembic завершится с
+`ModuleNotFoundError`.
+
 Миграции запускаются явно **до старта backend**. Приложение не выполняет
 автоматический upgrade или stamp. `create_all()` при запуске приложения
 не обновляет структуру существующих таблиц.
@@ -11,6 +15,7 @@ URL берётся из `DATABASE_URL` окружения или личного 
 ## Новая пустая база
 
 ```text
+$env:PYTHONPATH = "src"
 .venv/Scripts/python.exe -m alembic upgrade head
 ```
 
@@ -25,6 +30,7 @@ URL берётся из `DATABASE_URL` окружения или личного 
 Убедитесь, что выбран правильный DATABASE_URL, не публикуя его значение.
 
 ```text
+$env:PYTHONPATH = "src"
 .venv/Scripts/python.exe -m alembic -x legacy_baseline=true stamp 0001_existing_schema
 .venv/Scripts/python.exe -m alembic upgrade head
 ```
