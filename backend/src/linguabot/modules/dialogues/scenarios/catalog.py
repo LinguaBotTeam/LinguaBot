@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class ScenarioDefinition:
+    title: str
     bot_role: str
     learner_goal: str
     steps: tuple[str, ...]
@@ -12,6 +13,7 @@ class ScenarioDefinition:
 
 SCENARIOS: dict[str, ScenarioDefinition] = {
     "introductions": ScenarioDefinition(
+        title="Знакомство",
         bot_role="A new acquaintance at a language club.",
         learner_goal=(
             "Greet someone, introduce yourself, and ask about their name, "
@@ -26,6 +28,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "cafe": ScenarioDefinition(
+        title="В кафе",
         bot_role="A barista at a cafe.",
         learner_goal=(
             "Politely order food and drinks, ask about ingredients, "
@@ -40,6 +43,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "shop": ScenarioDefinition(
+        title="В магазине",
         bot_role="A shop assistant in a clothing shop.",
         learner_goal=(
             "Ask about products, sizes and prices, try something on, "
@@ -54,6 +58,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "travel": ScenarioDefinition(
+        title="Поездка",
         bot_role=(
             "An airline check-in desk employee. Start in this role; only "
             "become a fellow passenger after check-in is finished and "
@@ -72,6 +77,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "business_meeting": ScenarioDefinition(
+        title="Деловая встреча",
         bot_role="A business partner or client in a project meeting.",
         learner_goal=(
             "Present a proposal, agree or disagree politely, "
@@ -86,6 +92,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "doctor_visit": ScenarioDefinition(
+        title="Визит к врачу",
         bot_role="A general practitioner in a simulated English lesson.",
         learner_goal=(
             "Describe symptoms, understand recommendations "
@@ -101,6 +108,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "renting_a_flat": ScenarioDefinition(
+        title="Аренда жилья",
         bot_role="A landlord or letting agent showing a flat.",
         learner_goal=(
             "Ask about rental conditions and bills, and negotiate the rent."
@@ -114,6 +122,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "customer_support": ScenarioDefinition(
+        title="Звонок в службу поддержки",
         bot_role="A customer support agent on a simulated phone call.",
         learner_goal=(
             "Describe a problem, follow instructions and request "
@@ -128,6 +137,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "job_interview": ScenarioDefinition(
+        title="Собеседование",
         bot_role="An HR interviewer conducting a job interview.",
         learner_goal=(
             "Describe work experience, answer behavioural questions "
@@ -143,6 +153,7 @@ SCENARIOS: dict[str, ScenarioDefinition] = {
         ),
     ),
     "weekend_small_talk": ScenarioDefinition(
+        title="Планы на выходные",
         bot_role="A friendly acquaintance chatting about the weekend.",
         learner_goal=(
             "Keep a casual conversation going, make an invitation "
