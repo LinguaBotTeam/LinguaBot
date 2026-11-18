@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
+  <title>Упражнение — LinguaBot</title>
+  <script>
+    try {
+      if (localStorage.getItem('linguabot-theme') === 'light') {
+        document.documentElement.dataset.theme = 'light';
+      }
+    } catch {}
+  </script>
+  <link rel="stylesheet" href="./src/styles/style.css?v=3">
+  <link rel="stylesheet" href="./src/styles/auth.css?v=3">
+  <link rel="stylesheet" href="./src/styles/assessment.css?v=1">
+  <link rel="stylesheet" href="./src/styles/exercise.css?v=1">
+</head>
+<body>
+  <header class="header container">
+    <a class="logo" href="./index.html"><span aria-hidden="true">L</span> LinguaBot</a>
+    <div class="header-actions">
+      <a class="nav-link" href="./index.html">На главную</a>
+      <a class="nav-link" href="./assessment.html">Тест уровня</a>
+      <a class="nav-link" href="./chat.html">Практика в чате</a>
+      <div class="auth-actions" data-auth-actions></div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить светлую тему">
+        <span id="theme-icon" aria-hidden="true">☀</span>
+        <span id="theme-label">Светлая тема</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="assessment container" data-exercise>
+    <section class="assessment-intro">
+      <p class="badge">Шаг 3 · Грамматика</p>
+      <h1>Упражнение</h1>
+      <p class="description">Один короткий вопрос по грамматике. Сложность подбирается по результату теста уровня, а после ответа сразу видно, верно ли вы ответили, и почему.</p>
+    </section>
+
+    <section class="assessment-card" data-state="loading">
+      <p class="assessment-status" role="status">Загружаем упражнение…</p>
+    </section>
+
+    <section class="assessment-card" data-state="auth" hidden>
+      <h2>Сначала войдите в аккаунт</h2>
+      <p class="assessment-text">Сложность упражнения подбирается по вашему результату теста, поэтому нужна авторизация.</p>
+      <div class="assessment-actions assessment-actions-start">
+        <button class="button" type="button" data-open-login>Войти</button>
+        <button class="button button-secondary" type="button" data-open-register>Зарегистрироваться</button>
+      </div>
+    </section>
+
+    <section class="assessment-card" data-state="exercise" hidden>
+      <div class="exercise-meta">
+        <span class="badge" data-exercise-difficulty>Начальный уровень</span>
+        <span class="exercise-topic" data-exercise-topic></span>
+      </div>
+      <p class="exercise-source" data-exercise-source></p>
+
+      <form class="exercise-form" data-exercise-form novalidate>
+        <h2 class="question-text" id="exercise-question" data-exercise-prompt></h2>
+        <div class="options" data-exercise-options role="radiogroup" aria-labelledby="exercise-question"></div>
+        <p class="form-error" data-exercise-error role="alert" hidden></p>
+
+        <div class="assessment-actions assessment-actions-start">
+          <button class="button" type="submit" data-exercise-check>Проверить</button>
+        </div>
+      </form>
+
+      <div class="exercise-feedback" data-exercise-feedback hidden>
+        <p class="exercise-verdict" data-exercise-verdict></p>
+        <p class="exercise-answer" data-exercise-answer></p>
+        <div class="exercise-explanation">
+          <h3>Объяснение</h3>
+          <p data-exercise-explanation></p>
+        </div>
+        <div class="assessment-actions assessment-actions-start">
+          <button class="button" type="button" data-exercise-next>Следующее задание <span aria-hidden="true">→</span></button>
+          <a class="button button-secondary" href="./assessment.html">Пройти тест заново</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="assessment-card" data-state="error" hidden>
+      <h2>Не удалось загрузить упражнение</h2>
+      <p class="form-error" data-error-message role="alert"></p>
+      <div class="assessment-actions assessment-actions-start">
+        <button class="button" type="button" data-exercise-retry>Попробовать снова</button>
+      </div>
+    </section>
+
+    <noscript>
+      <section class="assessment-card">
+        <h2>Включите JavaScript</h2>
+        <p class="assessment-text">Для упражнения нужен JavaScript в браузере.</p>
+      </section>
+    </noscript>
+  </main>
+
+  <footer class="footer container">LinguaBot · Языки становятся ближе</footer>
+
+  <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-dialog-title">
+    <button class="auth-close" type="button" data-auth-close aria-label="Закрыть">×</button>
+    <h2 id="auth-dialog-title" data-auth-title>Вход в аккаунт</h2>
+    <p class="auth-subtitle" data-auth-subtitle>Продолжай обучение с того места, где остановился.</p>
+
+    <div class="auth-panel" data-auth-panel="login">
+      <form class="form" data-auth-form="login" novalidate>
+        <p class="form-error" data-auth-error role="alert" hidden></p>
+        <p class="form-success" data-auth-success role="status" hidden></p>
+
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="login-password">Пароль</label>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Ваш пароль" minlength="8" required>
+        </div>
+
+        <button class="button" type="submit">Войти</button>
+      </form>
+
+      <p class="auth-alt">Нет аккаунта? <button class="link-button" type="button" data-auth-switch="register">Зарегистрироваться</button></p>
+    </div>
+
+    <div class="auth-panel" data-auth-panel="register" hidden>
+      <form class="form" data-auth-form="register" novalidate>
+        <p class="form-error" data-auth-error role="alert" hidden></p>
+
+        <div class="field">
+          <label for="register-name">Имя</label>
+          <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Как к тебе обращаться" minlength="2" required>
+        </div>
+
+        <div class="field">
+          <label for="register-email">Email</label>
+          <input id="register-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="field">
+          <label for="register-password">Пароль</label>
+          <input id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Минимум 8 символов" minlength="8" required>
+        </div>
+
+        <button class="button" type="submit">Зарегистрироваться</button>
+      </form>
+
+      <p class="auth-alt">Уже есть аккаунт? <button class="link-button" type="button" data-auth-switch="login">Войти</button></p>
+      <p class="auth-hint">Регистрируясь, ты соглашаешься использовать LinguaBot в учебных целях.</p>
+    </div>
+  </dialog>
+
+  <script src="./src/api/client.js?v=3"></script>
+  <script src="./src/app/script.js?v=3"></script>
+  <script src="./src/app/auth-modal.js?v=3"></script>
+  <script src="./src/app/session.js?v=3"></script>
+  <script src="./src/app/exercise.js?v=1"></script>
+</body>
+</html>

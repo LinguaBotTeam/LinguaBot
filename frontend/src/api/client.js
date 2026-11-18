@@ -126,6 +126,22 @@
     getResult: function () {
       return request('/assessment/result', { method: 'GET' });
     },
+    // Следующее грамматическое упражнение; сложность берётся из теста.
+    getNextExercise: function (exclude) {
+      const query = new URLSearchParams();
+      if (Array.isArray(exclude) && exclude.length > 0) {
+        query.set('exclude', exclude.join(','));
+      }
+      const suffix = query.toString() ? '?' + query.toString() : '';
+      return request('/exercises/next' + suffix, { method: 'GET' });
+    },
+    // Проверка ответа: сразу возвращает correct и explanation.
+    submitExerciseAnswer: function (id, optionId) {
+      return request('/exercises/' + encodeURIComponent(id) + '/answer', {
+        method: 'POST',
+        body: JSON.stringify({ option_id: optionId }),
+      });
+    },
     listDialogues: function (limit, offset) {
       return request('/dialogues?' + new URLSearchParams({ limit, offset }));
     },

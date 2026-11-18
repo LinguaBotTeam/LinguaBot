@@ -8,6 +8,7 @@ from linguabot.modules.dialogues.projects.router import (
     router as projects_router,
 )
 from linguabot.modules.dialogues.router import router as dialogues_router
+from linguabot.modules.exercises.router import router as exercises_router
 
 api_router = APIRouter()
 api_router.include_router(auth_router, prefix="/auth", tags=["auth"])
@@ -19,4 +20,7 @@ api_router.include_router(
 )
 api_router.include_router(
     assessment_router, prefix="/assessment", tags=["assessment"]
+)
+api_router.include_router(
+    exercises_router, prefix="/exercises", tags=["exercises"]
 )
