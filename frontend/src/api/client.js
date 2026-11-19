@@ -129,6 +129,9 @@
     listDialogues: function (limit, offset) {
       return request('/dialogues?' + new URLSearchParams({ limit, offset }));
     },
+    listScenarios: function () {
+      return request('/dialogues/scenarios');
+    },
     createDialogue: function (title, scenario) {
       return request('/dialogues', {
         method: 'POST',

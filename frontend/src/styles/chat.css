@@ -69,6 +69,41 @@
 }
 .chat-muted { color: var(--muted); font-size: 13px; }
 
+.chat-scenario-dialog {
+  width: min(460px, calc(100% - 28px));
+  max-height: calc(100% - 28px);
+  padding: clamp(16px, 4vw, 24px);
+  color: var(--text);
+  overflow: auto;
+}
+.chat-scenario-dialog::backdrop { background: var(--backdrop); }
+.chat-scenario-dialog h2 { font-size: 22px; line-height: 1.25; }
+.chat-scenario-dialog > .chat-muted { margin-block: 6px 14px; }
+.chat-scenario-list {
+  display: grid;
+  gap: 6px;
+  max-height: min(380px, 48dvh);
+  margin: 0;
+  padding: 6px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+.chat-scenario-option {
+  min-height: 44px;
+  border-color: var(--border);
+  background: var(--background);
+}
+.chat-scenario-option:focus-visible { outline-offset: 2px; }
+.chat-picker-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+.chat-picker-actions .button { min-height: 44px; padding: 8px 14px; }
+
 .chat-panel-header {
   display: flex;
   align-items: center;
@@ -183,3 +218,36 @@
   .chat-message { max-width: 94%; }
   .chat-shortcut { display: none; }
 }
+
+/* The library and the conversation share one workspace. */
+.chat-page {padding-block:clamp(25px,4vw,56px) 46px}
+.chat-intro h1 {font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,5.2vw,4.1rem);margin-block:10px 8px}
+.chat-intro .description {font-size:1rem}
+.chat-layout {border:1px solid var(--border);border-radius:12px;background:var(--surface);gap:0;align-items:stretch;overflow:clip;grid-template-columns:minmax(190px,26%) minmax(0,1fr)}
+.chat-card {border-radius:12px;box-shadow:none}
+.chat-layout>.chat-card {border:0;border-radius:0}
+.chat-layout>.chat-sidebar {background:var(--subtle);border-right:1px solid var(--border);padding:20px 15px}
+.chat-sidebar h2 {font-size:1.06rem;letter-spacing:-.02em}
+.chat-new {margin-block:14px 18px}
+.chat-dialogue-list {padding:3px;gap:2px}
+.chat-dialogue {border-radius:5px}
+.chat-dialogue[aria-current=true] {background:var(--surface);border-color:var(--border);box-shadow:inset 3px 0 var(--accent)}
+.chat-panel-header {background:var(--surface)}
+.chat-bot-icon {border-radius:8px;background:transparent;flex:0 0 auto;width:38px;height:38px}
+.chat-thread {height:clamp(255px,40vh,500px);background:var(--surface);padding:clamp(16px,2vw,28px)}
+.chat-empty {font:italic 1.3rem/1.4 var(--serif);max-width:38ch;margin:auto}
+.chat-message {padding:11px 16px}
+.chat-message.is-user {background:var(--user-background)}
+.chat-correction {font-size:.9rem}
+.chat-controls {background:var(--surface)}
+.chat-composer textarea {border-radius:8px;min-height:52px}
+.chat-picker-actions .button {border-radius:7px}
+.chat-scenario-dialog {width:min(640px,calc(100% - 28px)); padding:clamp(20px,3vw,32px)}
+.chat-scenario-dialog h2 {font:400 clamp(1.7rem,4vw,2.2rem)/1.15 var(--serif)}
+.chat-scenario-list {grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;padding:5px;max-height:min(450px,52dvh)}
+.chat-scenario-option {display:flex;align-items:center;gap:12px;padding:12px 5px;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+.chat-scenario-option::before {content:"";height:8px;width:8px;flex:none;border:1.5px solid var(--accent);border-radius:50%}
+.chat-scenario-option:hover,.chat-scenario-option:focus-visible {background:var(--bot-background)}
+.chat-secondary {color:var(--text);border-color:var(--border);background:transparent}
+@media(max-width:700px){.chat-layout{grid-template-columns:minmax(0,1fr)}.chat-layout>.chat-sidebar{border-right:0;border-bottom:1px solid var(--border);padding:14px}.chat-sidebar h2{display:inline}.chat-new{width:auto;margin:0 0 0 12px;display:inline-flex}.chat-dialogue-list{max-height:125px;margin-top:8px}.chat-dialogue-list:empty{display:none}.chat-thread{height:clamp(220px,39vh,380px)}}
+@media(max-width:520px){.chat-scenario-list{grid-template-columns:minmax(0,1fr)}.chat-page{padding-top:24px}.chat-intro h1{font-size:clamp(2.15rem,8vw,2.7rem)}}

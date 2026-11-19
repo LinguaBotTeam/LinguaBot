@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 420" role="img" aria-labelledby="title desc"><style>@media(prefers-color-scheme:dark){[fill="#edb494"]{fill:#39353a}[stroke="#383d2e"]{stroke:#c8aa99}[fill="#253c31"]{fill:#debfab}[fill="#254535"]{fill:#efd4b9}[stroke="#354b39"]{stroke:#ccb59e}[fill="#243c30"]{fill:#e2c5b1}[stroke="#344638"]{stroke:#d7b6a0}[stroke="#456657"]{stroke:#636473}[fill="#456657"]{fill:#636473}[fill="#f5edcd"]{fill:#b1a293}[stroke="#294435"]{stroke:#28282e}[stroke="#253e31"]{stroke:#302e33}[fill="#243e31"]{fill:#27262c}[fill="#faf0d3"]{fill:#d0bbab}[fill="#f7ebcb"]{fill:#dfcbb7}[stroke="#24513e"]{stroke:#606679}[fill="#563c2e"]{fill:#57443b}[stroke="#f8dfaf"]{stroke:#ebd6b7}}</style>
+<title id="title">Corner Café</title><desc id="desc">Иллюстрация к разговору в кафе: чашка кофе на блюдце, полосатая салфетка и вывеска Corner Café.</desc>
+<defs>
+  <pattern id="cloth" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
+    <rect width="28" height="28" fill="#f5edcd"/><rect width="11" height="28" fill="#456657"/>
+    <path d="M19 0v28" stroke="#456657" stroke-width="2"/>
+  </pattern>
+  <pattern id="speck" width="19" height="23" patternUnits="userSpaceOnUse"><path d="M3 4h1m11 13h1" stroke="#6d442c" stroke-width="1" opacity=".22"/></pattern>
+  <clipPath id="cup"><path d="M155 215c6 66 40 97 103 100 62 4 99-26 116-92Z"/></clipPath>
+</defs>
+<rect width="540" height="420" fill="#edb494"/><rect x="12" y="12" width="516" height="396" rx="2" fill="none" stroke="#383d2e" opacity=".55"/>
+<g fill="#253c31" font-family="Arial,sans-serif" font-size="12" letter-spacing="2"><text x="31" y="38">LINGUABOT PRESS</text><text x="509" y="38" text-anchor="end">EN / RU</text></g>
+<g fill="#254535" text-anchor="middle"><text x="270" y="118" font-family="Georgia,serif" font-weight="bold" font-style="italic" font-size="80" letter-spacing="-5">Corner Café</text></g>
+<path d="M45 285l278-41 178 70-282 66Z" fill="url(#cloth)" stroke="#294435" stroke-width="2"/>
+<g transform="rotate(-8 265 240)" stroke="#253e31" stroke-linejoin="round">
+<ellipse cx="263" cy="302" rx="150" ry="33" fill="#243e31" stroke="none"/>
+<ellipse cx="259" cy="291" rx="151" ry="37" fill="#faf0d3" stroke-width="4"/>
+<ellipse cx="260" cy="292" rx="126" ry="25" fill="none" stroke-width="2.5"/>
+<path d="M359 221c60-27 67 7 52 32-12 20-32 26-59 27l3-13c26-2 36-8 43-20 8-16 4-25-15-22l-18 8z" fill="#f7ebcb" stroke-width="4"/>
+<path d="M155 215c6 66 40 97 103 100 62 4 99-26 116-92Z" fill="#f7ebcb" stroke-width="4"/>
+<g clip-path="url(#cup)" fill="none" stroke-width="15" stroke="#24513e"><path d="M155 218q7 78 59 101m-24-95q4 66 48 99m-7-92q1 64 22 96m20-98q1 63-4 95m46-96q-7 64-28 97m62-96q-14 66-46 95"/></g>
+<ellipse cx="264" cy="218" rx="110" ry="36" fill="#f7ebcb" stroke-width="4"/>
+<ellipse cx="264" cy="221" rx="96" ry="25" fill="#563c2e" stroke-width="2.5"/>
+<g fill="none" stroke="#f8dfaf" stroke-linecap="round"><path d="M224 223c17-12 37-10 53 3-16-18-14-26 1-21 10 4 16 12 17 20 19-12 28-11 25-5-4 7-17 13-28 13-14 1-39-11-52-8" stroke-width="4"/><path d="M234 215c10-2 19 0 27 4m18-10 11 12" stroke-width="2"/></g>
+</g>
+<g fill="none" stroke="#344638" stroke-linecap="round" stroke-width="3"><path d="M239 181c-20-16 15-21-1-39m22 35c-9-11 12-17 5-27"/></g>
+<rect width="540" height="420" fill="url(#speck)"/>
+<path d="M30 374h100m280 0h100" stroke="#354b39"/><text x="270" y="390" text-anchor="middle" fill="#243c30" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">CONVERSATION PRACTICE</text>
+</svg>

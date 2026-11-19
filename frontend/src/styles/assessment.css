@@ -246,3 +246,17 @@
     flex-direction: column;
   }
 }
+
+.assessment {display:grid;grid-template-columns:minmax(220px,.7fr) minmax(0,1.2fr);gap:clamp(24px,6vw,90px);align-items:start;padding-block:clamp(30px,6vw,82px);min-height:68vh}
+.assessment-intro {margin:0}
+.assessment-intro h1 {font:400 clamp(2.8rem,4.8vw,4.3rem)/1.05 var(--serif);letter-spacing:-.045em;margin-block:15px}
+.assessment-intro .description {font-size:1.05rem}
+.test-imprint {display:flex;flex-direction:column;align-items:flex-start;width:185px;padding:17px 17px 16px 25px;border-left:7px double #535c47;margin:33px 0 0 4px;background:#dce6c7;color:#284231;transform:rotate(-3deg)}
+.test-imprint span,.test-imprint em {font:italic 1.75rem/.99 var(--serif)}
+.test-imprint b {font-size:.6rem;letter-spacing:.12em;border-top:1px solid;padding-top:6px;margin-top:22px;width:100%}
+.assessment-card {border-radius:8px;border-top:4px solid var(--accent);padding:clamp(18px,3.3vw,42px);box-shadow:none}
+.assessment-card h2 {font-size:clamp(1.45rem,2.3vw,2rem);line-height:1.2}
+.option,.review-item {border-radius:6px}
+.result-eyebrow {color:var(--accent)}
+.review-verdict.is-wrong {color:var(--alert);background:var(--danger-bg)}
+@media(max-width:760px){.assessment {grid-template-columns:1fr;gap:22px;min-height:0}.test-imprint{display:none}}
