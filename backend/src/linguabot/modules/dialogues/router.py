@@ -6,6 +6,9 @@ from fastapi import APIRouter, Path, Query, status
 
 from linguabot.modules.auth.dependencies import CurrentUser, SessionDep
 from linguabot.modules.dialogues import service
+from linguabot.modules.dialogues.scenarios.router import (
+    router as scenarios_router,
+)
 from linguabot.modules.dialogues.schemas import (
     DialogueCreate,
     DialogueProjectChange,
@@ -16,6 +19,7 @@ from linguabot.modules.dialogues.schemas import (
 )
 
 router = APIRouter()
+router.include_router(scenarios_router, prefix="/scenarios")
 
 # SQLAlchemy Integer соответствует int4 в PostgreSQL и поддерживается SQLite.
 DialogueId = Annotated[int, Path(ge=1, le=2**31 - 1)]
