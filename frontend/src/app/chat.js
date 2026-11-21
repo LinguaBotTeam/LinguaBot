@@ -10,7 +10,6 @@
   const list = find('dialogues');
   const listEmpty = find('list-empty');
   const name = find('name');
-  const scenario = find('scenario');
   const thread = find('thread');
   const empty = find('empty');
   const messages = find('messages');
@@ -21,13 +20,13 @@
   const example = find('example');
   const input = form.elements.content;
   const send = find('send');
+  const picker = find('picker');
+  const pickerList = find('picker-list');
+  const pickerStatus = find('picker-status');
+  const pickerError = find('picker-error');
+  const pickerClose = find('picker-close');
+  const pickerRetry = find('picker-retry');
 
-  const topicNames = {
-    cafe: 'В кафе',
-    introductions: 'Знакомство',
-    shop: 'В магазине',
-    free_chat: 'Свободный разговор',
-  };
   const dateFormat = new Intl.DateTimeFormat('ru-RU', {
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   });
@@ -38,6 +37,7 @@
   let historyReady = false;
   let busy = false;
   let generation = 0;
+  let creatingDialogue = false;
 
   function formatDate(value) {
     if (!value) return '';
@@ -53,6 +53,9 @@
     input.disabled = busy;
     send.disabled = busy || !input.value.trim();
     example.disabled = busy;
+    pickerList.querySelectorAll('button').forEach((button) => { button.disabled = busy; });
+    pickerClose.disabled = creatingDialogue;
+    pickerRetry.disabled = busy;
   }
 
   function setStatus(message) {
@@ -94,11 +97,7 @@
   function setActive(dialogue) {
     active = dialogue;
     historyReady = false;
-    name.textContent = dialogue ? dialogue.title : 'В кафе';
-    const topic = dialogue && Object.hasOwn(topicNames, dialogue.scenario)
-      ? topicNames[dialogue.scenario]
-      : 'Текстовый диалог';
-    scenario.textContent = topic + ' · Английский';
+    name.textContent = dialogue ? dialogue.title : 'Выберите диалог';
     messages.replaceChildren();
     empty.hidden = false;
     empty.textContent = dialogue
@@ -164,7 +163,7 @@
     window.history.replaceState(null, '', url);
   }
 
-  async function run(message, action, canReload = false) {
+  async function run(message, action, canReload = false, onError = null) {
     if (busy) return;
     const token = api.getToken();
     if (!token) {
@@ -182,7 +181,8 @@
         api.clearSession();
         document.dispatchEvent(new CustomEvent('linguabot:auth-changed'));
       } else if (isCurrent()) {
-        setError(error.message || 'Не удалось выполнить запрос.', canReload);
+        if (onError) onError(error);
+        else setError(error.message || 'Не удалось выполнить запрос.', canReload);
       }
     } finally {
       if (isCurrent()) {
@@ -195,6 +195,8 @@
 
   function refresh() {
     generation += 1;
+    creatingDialogue = false;
+    if (picker.open) picker.close();
     const signedIn = Boolean(api.getToken());
     auth.hidden = signedIn;
     workspace.hidden = !signedIn;
@@ -215,13 +217,91 @@
     }, true);
   }
 
-  create.addEventListener('click', () => {
-    run('Создаём диалог…', async (isCurrent) => {
-      const dialogue = await api.createDialogue('В кафе', 'cafe');
+  function setPickerError(message, canRetry = false) {
+    pickerError.textContent = message;
+    pickerError.hidden = !message;
+    pickerRetry.hidden = !canRetry;
+  }
+
+  async function loadScenarios() {
+    if (busy || !picker.open) return;
+    pickerList.replaceChildren();
+    pickerList.hidden = true;
+    setPickerError('');
+    pickerStatus.textContent = 'Загружаем темы…';
+    await run('Загружаем темы…', async (isCurrent) => {
+      const topics = await api.listScenarios();
+      if (!isCurrent() || !picker.open) return;
+      if (!Array.isArray(topics) || topics.some((topic) =>
+        !topic || typeof topic.title !== 'string' || !topic.title.trim() ||
+        typeof topic.scenario !== 'string' || !topic.scenario.trim(),
+      )) {
+        throw new Error('Сервер вернул неожиданный список тем.');
+      }
+      if (!topics.length) {
+        setPickerError('Темы пока недоступны.', true);
+        return;
+      }
+      topics.forEach((topic) => {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.className = 'chat-dialogue chat-scenario-option';
+        button.type = 'button';
+        button.textContent = topic.title;
+        button.addEventListener('click', () => createDialogue(topic));
+        item.append(button);
+        pickerList.append(item);
+      });
+      pickerList.hidden = false;
+      syncControls();
+    }, false, () => {
+      if (picker.open) setPickerError('Не удалось загрузить темы. Попробуйте ещё раз.', true);
+    });
+    if (!picker.open) return;
+    pickerStatus.textContent = '';
+    if (document.activeElement === pickerClose || document.activeElement === pickerRetry ||
+        document.activeElement === document.body) {
+      (pickerList.querySelector('button') || (pickerRetry.hidden ? pickerClose : pickerRetry)).focus();
+    }
+  }
+
+  async function createDialogue(topic) {
+    if (busy || creatingDialogue || !picker.open) return;
+    let opened = null;
+    creatingDialogue = true;
+    setPickerError('');
+    pickerStatus.textContent = 'Создаём диалог…';
+    await run('Создаём диалог…', async (isCurrent) => {
+      const dialogue = await api.createDialogue(topic.title, topic.scenario);
       if (!isCurrent()) return;
+      picker.close();
       dialogues.unshift(dialogue);
       await openDialogue(dialogue, isCurrent);
-    }, true);
+      if (isCurrent()) opened = dialogue;
+    }, true, (error) => {
+      const message = error.message || 'Не удалось создать диалог.';
+      if (picker.open) setPickerError(message);
+      else setError(message, true);
+    });
+    creatingDialogue = false;
+    pickerStatus.textContent = '';
+    syncControls();
+    if (!busy && opened && active === opened && historyReady) input.focus();
+  }
+
+  create.addEventListener('click', () => {
+    if (busy || picker.open) return;
+    if (!api.getToken()) {
+      refresh();
+      return;
+    }
+    picker.showModal();
+    loadScenarios();
+  });
+  pickerClose.addEventListener('click', () => picker.close());
+  pickerRetry.addEventListener('click', loadScenarios);
+  picker.addEventListener('cancel', (event) => {
+    if (creatingDialogue) event.preventDefault();
   });
   reload.addEventListener('click', refresh);
 

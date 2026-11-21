@@ -1,40 +1,36 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="data:,">
+  <link rel="icon" href="./public/assets/mark.svg">
   <title>Практика в чате — LinguaBot</title>
   <script>
     try {
-      if (localStorage.getItem('linguabot-theme') === 'light') {
-        document.documentElement.dataset.theme = 'light';
+      if (localStorage.getItem('linguabot-theme') === 'dark') {
+        document.documentElement.dataset.theme = 'dark';
       }
     } catch {}
   </script>
-  <link rel="stylesheet" href="./src/styles/style.css?v=3">
-  <link rel="stylesheet" href="./src/styles/auth.css?v=3">
-  <link rel="stylesheet" href="./src/styles/chat.css?v=1">
+  <link rel="stylesheet" href="./src/styles/style.css?v=studio2">
+  <link rel="stylesheet" href="./src/styles/auth.css?v=studio1">
+  <link rel="stylesheet" href="./src/styles/chat.css?v=studio1">
 </head>
 <body>
-  <header class="header container">
-    <a class="logo" href="./index.html"><span aria-hidden="true">L</span> LinguaBot</a>
-    <div class="header-actions">
-      <a class="nav-link" href="./index.html">На главную</a>
-      <a class="nav-link" href="./assessment.html">Тест уровня</a>
-      <div class="auth-actions" data-auth-actions></div>
-      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить светлую тему">
-        <span id="theme-icon" aria-hidden="true">☀</span>
-        <span id="theme-label">Светлая тема</span>
+  <header class="mast"><div class="header container">
+    <a class="logo" href="./index.html"><img src="./public/assets/mark.svg" alt="" width="36" height="36">LinguaBot</a>
+    <nav class="primary-nav" aria-label="Разделы"><a class="nav-link" href="./assessment.html">Тест уровня</a><a class="nav-link" href="./chat.html" aria-current="page">Практика</a></nav>
+    <div class="header-actions"><div class="auth-actions" data-auth-actions></div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить тёмную тему">
+        <span id="theme-icon" aria-hidden="true">☾</span><span id="theme-label" class="visually-hidden">Тёмная тема</span>
       </button>
-    </div>
-  </header>
+    </div></div></header>
 
   <main class="chat-page container" data-chat>
     <section class="chat-intro" aria-labelledby="chat-title">
-      <p class="badge">Шаг 2 · Разговорная практика</p>
-      <h1 id="chat-title">Практика в чате</h1>
-      <p class="description">Закажите что-нибудь в кафе на английском. LinguaBot ответит и покажет, как поправить фразу, если в ней есть ошибка.</p>
+      <p class="overline"><i></i> Практикум</p>
+      <h1 id="chat-title">Разговорная практика</h1>
+      <p class="description">Выберите тему и напишите первую реплику на английском.</p>
     </section>
 
     <section class="chat-card chat-gate" data-chat-auth hidden>
@@ -49,7 +45,7 @@
     <div class="chat-layout" data-chat-workspace hidden>
       <aside class="chat-card chat-sidebar" aria-labelledby="dialogue-list-title">
         <h2 id="dialogue-list-title">Мои диалоги</h2>
-        <button class="button chat-new" type="button" data-chat-create>
+        <button class="button chat-new" type="button" data-chat-create aria-haspopup="dialog" aria-controls="chat-scenario-dialog">
           <span aria-hidden="true">+</span> Новый диалог
         </button>
         <ul class="chat-dialogue-list" data-chat-dialogues></ul>
@@ -58,10 +54,10 @@
 
       <section class="chat-card chat-panel" aria-labelledby="current-dialogue-title">
         <div class="chat-panel-header">
-          <span class="chat-bot-icon" aria-hidden="true">L</span>
+          <img class="chat-bot-icon" src="./public/assets/mark.svg" alt="" width="38" height="38">
           <div>
-            <h2 id="current-dialogue-title" data-chat-name>В кафе</h2>
-            <p class="chat-muted" data-chat-scenario>Текстовый диалог · Английский</p>
+            <h2 id="current-dialogue-title" data-chat-name>Выберите диалог</h2>
+            <p class="chat-muted">Текстовый диалог · Английский</p>
           </div>
         </div>
 
@@ -82,7 +78,7 @@
             <label for="chat-input">Ваше сообщение</label>
             <div class="chat-composer">
               <textarea id="chat-input" name="content" rows="2" maxlength="4000" placeholder="Напишите фразу на английском…" required aria-describedby="chat-input-help"></textarea>
-              <button class="button" type="submit" data-chat-send>Отправить <span aria-hidden="true">→</span></button>
+              <button class="button" type="submit" data-chat-send>Отправить</button>
             </div>
             <p class="chat-muted chat-shortcut" id="chat-input-help">Enter — отправить · Shift+Enter — новая строка</p>
           </form>
@@ -90,15 +86,28 @@
       </section>
     </div>
 
+    <dialog class="chat-card chat-scenario-dialog" id="chat-scenario-dialog" data-chat-picker
+            aria-labelledby="chat-scenario-title" aria-describedby="chat-scenario-description">
+      <h2 id="chat-scenario-title">Выберите тему диалога</h2>
+      <p class="chat-muted" id="chat-scenario-description">В какой ситуации хотите попрактиковать английский?</p>
+      <p class="chat-status" data-chat-picker-status role="status"></p>
+      <p class="form-error" data-chat-picker-error role="alert" hidden></p>
+      <ul class="chat-scenario-list" data-chat-picker-list aria-label="Темы диалога" hidden></ul>
+      <div class="chat-picker-actions">
+        <button class="button chat-secondary" type="button" data-chat-picker-close autofocus>Отмена</button>
+        <button class="button" type="button" data-chat-picker-retry hidden>Повторить</button>
+      </div>
+    </dialog>
+
     <noscript><p class="chat-card chat-gate">Включите JavaScript, чтобы открыть чат.</p></noscript>
   </main>
 
-  <footer class="footer container">LinguaBot · Языки становятся ближе</footer>
+  <footer class="footer container"><a href="./index.html">LinguaBot</a><span>Практикум английского языка</span></footer>
 
   <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-dialog-title">
     <button class="auth-close" type="button" data-auth-close aria-label="Закрыть">×</button>
     <h2 id="auth-dialog-title" data-auth-title>Вход в аккаунт</h2>
-    <p class="auth-subtitle" data-auth-subtitle>Продолжай обучение с того места, где остановился.</p>
+    <p class="auth-subtitle" data-auth-subtitle>Войдите, чтобы открыть свои диалоги и результат теста.</p>
 
     <div class="auth-panel" data-auth-panel="login">
       <form class="form" data-auth-form="login" novalidate>
@@ -127,7 +136,7 @@
 
         <div class="field">
           <label for="register-name">Имя</label>
-          <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Как к тебе обращаться" minlength="2" required>
+          <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" minlength="2" required>
         </div>
 
         <div class="field">
@@ -144,14 +153,14 @@
       </form>
 
       <p class="auth-alt">Уже есть аккаунт? <button class="link-button" type="button" data-auth-switch="login">Войти</button></p>
-      <p class="auth-hint">Регистрируясь, ты соглашаешься использовать LinguaBot в учебных целях.</p>
+      <p class="auth-hint">LinguaBot предназначен для учебной практики.</p>
     </div>
   </dialog>
 
-  <script src="./src/api/client.js?v=4"></script>
-  <script src="./src/app/script.js?v=3"></script>
-  <script src="./src/app/auth-modal.js?v=3"></script>
-  <script src="./src/app/session.js?v=3"></script>
-  <script src="./src/app/chat.js?v=1"></script>
+  <script src="./src/api/client.js?v=studio1"></script>
+  <script src="./src/app/script.js?v=studio1"></script>
+  <script src="./src/app/auth-modal.js?v=studio1"></script>
+  <script src="./src/app/session.js?v=studio1"></script>
+  <script src="./src/app/chat.js?v=studio1"></script>
 </body>
 </html>

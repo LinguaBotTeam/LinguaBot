@@ -1,40 +1,33 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="data:,">
+  <link rel="icon" href="./public/assets/mark.svg">
   <title>Тест уровня — LinguaBot</title>
   <script>
     try {
-      if (localStorage.getItem('linguabot-theme') === 'light') {
-        document.documentElement.dataset.theme = 'light';
+      if (localStorage.getItem('linguabot-theme') === 'dark') {
+        document.documentElement.dataset.theme = 'dark';
       }
     } catch {}
   </script>
-  <link rel="stylesheet" href="./src/styles/style.css?v=3">
-  <link rel="stylesheet" href="./src/styles/auth.css?v=3">
-  <link rel="stylesheet" href="./src/styles/assessment.css?v=1">
+  <link rel="stylesheet" href="./src/styles/style.css?v=studio2">
+  <link rel="stylesheet" href="./src/styles/auth.css?v=studio1">
+  <link rel="stylesheet" href="./src/styles/assessment.css?v=studio1">
 </head>
 <body>
-  <header class="header container">
-    <a class="logo" href="./index.html"><span aria-hidden="true">L</span> LinguaBot</a>
-    <div class="header-actions">
-      <a class="nav-link" href="./index.html">На главную</a>
-      <div class="auth-actions" data-auth-actions></div>
-      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить светлую тему">
-        <span id="theme-icon" aria-hidden="true">☀</span>
-        <span id="theme-label">Светлая тема</span>
+  <header class="mast"><div class="header container">
+    <a class="logo" href="./index.html"><img src="./public/assets/mark.svg" alt="" width="36" height="36">LinguaBot</a>
+    <nav class="primary-nav" aria-label="Разделы"><a class="nav-link" href="./assessment.html" aria-current="page">Тест уровня</a><a class="nav-link" href="./chat.html">Практика</a></nav>
+    <div class="header-actions"><div class="auth-actions" data-auth-actions></div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Включить тёмную тему">
+        <span id="theme-icon" aria-hidden="true">☾</span><span id="theme-label" class="visually-hidden">Тёмная тема</span>
       </button>
-    </div>
-  </header>
+    </div></div></header>
 
   <main class="assessment container" data-assessment>
-    <section class="assessment-intro">
-      <p class="badge">Шаг 1 · Определим уровень</p>
-      <h1>Тест уровня</h1>
-      <p class="description">Пять коротких вопросов по английскому. Ответьте на все — и мы покажем ваш уровень и сохраним результат в профиле.</p>
-    </section>
+    <section class="assessment-intro"><p class="overline"><i></i> Перед практикой</p><h1>Тест уровня</h1><p class="description">Пять вопросов по английскому. Выберите ответы, а в конце посмотрите свой уровень и разбор ошибок.</p><div class="test-imprint" aria-hidden="true"><span>English</span><em>Workbook</em><b>LINGUABOT PRESS</b></div></section>
 
     <section class="assessment-card" data-state="loading">
       <p class="assessment-status" role="status">Загружаем данные…</p>
@@ -58,7 +51,7 @@
         <li>При следующем входе уровень загрузится автоматически</li>
       </ul>
       <div class="assessment-actions assessment-actions-start">
-        <button class="button" type="button" data-start-test>Начать тест <span aria-hidden="true">→</span></button>
+        <button class="button" type="button" data-start-test>Начать тест</button>
       </div>
     </section>
 
@@ -92,7 +85,7 @@
       </div>
 
       <div class="assessment-actions assessment-actions-start">
-        <a class="button" href="./chat.html">Перейти к чату <span aria-hidden="true">→</span></a>
+        <a class="button" href="./chat.html">Перейти к чату</a>
         <button class="button button-secondary" type="button" data-retry>Пройти заново</button>
         <a class="button button-secondary" href="./index.html">На главную</a>
       </div>
@@ -114,12 +107,12 @@
     </noscript>
   </main>
 
-  <footer class="footer container">LinguaBot · Языки становятся ближе</footer>
+  <footer class="footer container"><a href="./index.html">LinguaBot</a><span>Практикум английского языка</span></footer>
 
   <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-dialog-title">
     <button class="auth-close" type="button" data-auth-close aria-label="Закрыть">×</button>
     <h2 id="auth-dialog-title" data-auth-title>Вход в аккаунт</h2>
-    <p class="auth-subtitle" data-auth-subtitle>Продолжай обучение с того места, где остановился.</p>
+    <p class="auth-subtitle" data-auth-subtitle>Войдите, чтобы открыть свои диалоги и результат теста.</p>
 
     <div class="auth-panel" data-auth-panel="login">
       <form class="form" data-auth-form="login" novalidate>
@@ -148,7 +141,7 @@
 
         <div class="field">
           <label for="register-name">Имя</label>
-          <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Как к тебе обращаться" minlength="2" required>
+          <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться" minlength="2" required>
         </div>
 
         <div class="field">
@@ -165,14 +158,14 @@
       </form>
 
       <p class="auth-alt">Уже есть аккаунт? <button class="link-button" type="button" data-auth-switch="login">Войти</button></p>
-      <p class="auth-hint">Регистрируясь, ты соглашаешься использовать LinguaBot в учебных целях.</p>
+      <p class="auth-hint">LinguaBot предназначен для учебной практики.</p>
     </div>
   </dialog>
 
-  <script src="./src/api/client.js?v=3"></script>
-  <script src="./src/app/script.js?v=3"></script>
-  <script src="./src/app/auth-modal.js?v=3"></script>
-  <script src="./src/app/session.js?v=3"></script>
-  <script src="./src/app/assessment.js?v=1"></script>
+  <script src="./src/api/client.js?v=studio1"></script>
+  <script src="./src/app/script.js?v=studio1"></script>
+  <script src="./src/app/auth-modal.js?v=studio1"></script>
+  <script src="./src/app/session.js?v=studio1"></script>
+  <script src="./src/app/assessment.js?v=studio1"></script>
 </body>
 </html>
